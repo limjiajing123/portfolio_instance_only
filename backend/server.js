@@ -8,14 +8,14 @@ const portfolioKnowledge = require('./portfolioKnowledge');
 const app = express();
 const port = 5000;
 
-const corsOptions = {
-  origin: 'http://internal-internalalb-512605653.ap-southeast-1.elb.amazonaws.com',  // internal ALB DNS
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-};
+// const corsOptions = {
+//   origin: 'http://internal-internalalb-512605653.ap-southeast-1.elb.amazonaws.com',  // internal ALB DNS
+//   methods: ['GET', 'POST'],
+//   allowedHeaders: ['Content-Type'],
+// };
 
-app.use(cors(corsOptions));  // Apply CORS options
-// app.use(cors());
+// app.use(cors(corsOptions));  // Apply CORS options
+app.use(cors());
 app.use(express.json());
 
 // Debugging logs

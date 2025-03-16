@@ -26,16 +26,16 @@ jobs:
       - name: Build and Push Backend Docker Image
         run: |
           docker build -t portfolio-backend ./backend
-          docker tag portfolio-backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfolioweb/backend:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfolioweb/backend:latest
+          docker tag portfolio-backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancebackend:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancebackend:latest
 
       - name: Build and Push Frontend Docker Image
         run: |
           docker build -t portfolio-frontend ./frontend
-          docker tag portfolio-frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfolioweb/frontend:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfolioweb/frontend:latest
+          docker tag portfolio-frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancebackend:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancebackend:latest
 
-      - name: Deploy to ECS
-        run: |
-          aws ecs update-service --cluster new-portfolio --service new-backend-ecs --force-new-deployment
-          aws ecs update-service --cluster new-portfolio --service new-frontend-ecs --force-new-deployment
+      # - name: Deploy to ECS
+      #   run: |
+      #     aws ecs update-service --cluster new-portfolio --service new-backend-ecs --force-new-deployment
+      #     aws ecs update-service --cluster new-portfolio --service new-frontend-ecs --force-new-deployment
