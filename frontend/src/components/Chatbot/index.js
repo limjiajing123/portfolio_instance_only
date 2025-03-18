@@ -210,7 +210,7 @@ const Chatbot = () => {
     setIsBotTyping(true);
 
     try {
-      const response = await axios.post('https://18.139.217.58:5000/api/chat', { message: messageToSend });
+      const response = await axios.post('https://limjiajing.com/api/chat', { message: messageToSend });
       console.log('Backend response:', response.data);
       setIsBotTyping(false);
       setChatHistory((prev) => [

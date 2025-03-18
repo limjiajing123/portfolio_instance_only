@@ -8,14 +8,15 @@ const portfolioKnowledge = require('./portfolioKnowledge');
 const app = express();
 const port = 5000;
 
-// const corsOptions = {
-//   origin: 'http://internal-internalalb-512605653.ap-southeast-1.elb.amazonaws.com',  // internal ALB DNS
-//   methods: ['GET', 'POST'],
-//   allowedHeaders: ['Content-Type'],
-// };
+const corsOptions = {
+  origin: 'https://www.limjiajing.com',  // Frontend domain
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,  // Allow credentials (cookies) to be sent
+};
 
-// app.use(cors(corsOptions));  // Apply CORS options
-app.use(cors());
+app.use(cors(corsOptions));  // Apply CORS options
+// app.use(cors());
 app.use(express.json());
 
 // Debugging logs
