@@ -11,9 +11,9 @@ export const Bio = {
   resume:
     "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Lim_Jia_Jing_Resume_NTU.pdf",
   linkedin: "https://www.linkedin.com/in/limjiajing123",
-  twitter: "https://twitter.com/RishavChanda",
-  insta: "https://www.instagram.com/rishav_chanda/",
-  facebook: "https://www.facebook.com/rishav.chanda.165/",
+  twitter: "",
+  insta: "",
+  facebook: "",
 };
 
 export const skills = [
@@ -250,6 +250,17 @@ export const skills = [
         image:
           "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/tricentis-tosca-logo.png",
       },
+      {
+        name: "Jenkins",
+        image:
+          "https://skillicons.dev/icons?i=jenkins",
+      },
+      {
+        name: "Oracle SQL",
+        image:
+          "https://skillicons.dev/icons?i=Oracle",
+      },
+      
     ],
   },
 ];
@@ -261,11 +272,12 @@ export const experiences = [
     role: "Automation Software Engineer (Graduate Analsyt) (Banking Financial Services Division Payment Team)",
     company: "Cognizant Tech Solutions",
     date: "June 2024 - Present",
-    desc: `Automated regression, smoke, sanity, system, and usability testing using Tosca for banking applications, ensuring high-quality software.
-          Tested iOS and Android banking apps using Physical Devices, Perfecto, Postman (for API validation and backend edits), Oracle SQL (for log analysis), and SSH with PuTTY (to refresh microservice caches).
-          Learned and applied banking processes while testing critical financial applications, ensuring compliance with industry standards and security requirements.
-          Collaborated with cross-functional teams using Jira and Confluence to track defects, document processes, and improve software quality.
-          Actively participated in the SDLC Agile sprint process, designing and executing test plans to optimize testing efficiency and support continuous integration. `,
+    desc: ` Automated regression, smoke, sanity, system, and usability testing using Tosca for banking applications, ensuring high-quality software.
+            Tested iOS and Android banking apps using Physical Devices, Perfecto Automation, Postman (API validation & backend edits), Oracle SQL (log analysis), and SSH (PuTTY/WinSCP).
+            Deployed banking applications to UAT using Jenkins, contributing to CI/CD pipeline automation and streamlining testing workflows.
+            Ensured compliance with banking processes, industry standards, and security requirements while testing critical financial applications.
+            Collaborated with cross-functional teams using Jira and Confluence to track defects, document processes, and improve software quality.
+            Actively participated in the SDLC Agile sprint process, designing and executing test plans to optimize testing efficiency and support continuous integration.`,
     skills: [
       "Tosca",
       "Jira",
@@ -273,6 +285,11 @@ export const experiences = [
       "HTML",
       "CSS",
       "JavaScript",
+      "PuTTY",
+      "WinSCP",
+      "Postman",
+      "Oracle SQL",
+      "Jenkins",
     ],
     img2: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/cognizant_event_grp_photos.jpeg",
   },
@@ -332,12 +349,12 @@ export const experiences = [
   },
   // {
   //   id: 2,
-  //   img: "https://firebasestorage.googleapis.com/v0/b/flexi-coding.appspot.com/o/girlScript.jpeg?alt=media&token=e656a621-cf3c-4230-bf0f-e74b4cec6035",
-  //   role: "Open Source Contributor ",
-  //   company: "GirlScript Summer of Code",
-  //   date: "May 2023 - Present",
-  //   desc: "Contributing to different open-source projects and learn from industry experts",
-  //   doc: "https://media.licdn.com/dms/image/D4D22AQGzSpgFaR4hsQ/feedshare-shrink_800/0/1684079632872?e=1687996800&v=beta&t=i0xWn_k32Oj9SxKfc6rARSbOghXD9Ge6WyEb2p2vvrc",
+  //   img: "",
+  //   role: " ",
+  //   company: "",
+  //   date: "",
+  //   desc: "",
+  //   doc: "",
   // },
 ];
 
@@ -362,12 +379,12 @@ export const education = [
   },
   // {
   //   id: 2,
-  //   img: "https://firebasestorage.googleapis.com/v0/b/flexi-coding.appspot.com/o/methodist.png?alt=media&token=018a1b18-e2dd-4f34-8855-cff1b6b69fd3",
-  //   school: "Methodist School, Dankuni",
-  //   date: "Apr 2017 - Apr 2019",
-  //   grade: "92.3%",
-  //   desc: "I completed my class 10 education at Methodist School, Dankuni, where I studied Science with Computer Application.",
-  //   degree: "ICSC(X), Science with Computer",
+  //   img: "",
+  //   school: "",
+  //   date: "",
+  //   grade: "",
+  //   desc: "",
+  //   degree: "",
   // },
 ];
 
@@ -377,7 +394,14 @@ export const projects = [
     title: "PortFolio Website",
     date: "Present",
     description:
-      "Yes you are looking at it. This is my portfolio website. I have designed and developed this website to showcase my projects, experiences, and skills. I have used React Js for the front end and styled components for the styling. I have used framer-motion for the animations and react-icons for the icons. I have used the react-typewriter-effect for the typing effect. I have used the react-scroll for the smooth scrolling. I have used the react-modal for the modal. I have used the react-text-loop for the text loop. I have used the react-router-dom for the routing. I have used the react-syntax-highlighter for the syntax highlighting. I have used the styled-components for the styling. I have used the web-vitals for the performance metrics.",
+      `Yes you are looking at it. This is my portfolio website. 
+      I have designed and developed this website to showcase my projects, experiences, and skills.
+      Developed and deployed a React-based portfolio website with an AI chatbot using Express.js for the backend, hosted on AWS ECS.
+      Designed a frontend-backend architecture, where the backend handles API calls to OpenRouter for chatbot(DeepSeek) responses.
+      Built a secure AWS infrastructure with a VPC, private subnets for ECS tasks, an ALB for frontend traffic routing, and VPC endpoints for ECR image pulling without a NAT.
+      Configured a NAT instance to allow backend ECS tasks to access external APIs while maintaining private network security.
+      Automated CI/CD using GitHub Actions, building Docker images, pushing them to AWS ECR, and deploying via ECS.
+      Optimized performance with Styled-Components, React’s component-based design, and efficient asset management.`,
     image:
       "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/PortfolioWebsite2024.gif",
     tags: [
@@ -385,11 +409,15 @@ export const projects = [
       "HTML5",
       "CSS3",
       "JavaScript",
-      "Style-Components",
+      "Express.js",
+      "AWS",
+      "Docker",
+      "GitHub",
+      "CI/CD",
     ],
     // category: "all",
-    // github: "https://github.com/rishavchanda/Trackify",
-    // webapp: "https://trackify.duckdns.org",
+    // github: "",
+    // webapp: "",
   },
   {
     id: 0,
@@ -407,9 +435,9 @@ export const projects = [
     image:
       "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/simulation_with_rds_gui.gif",
     tags: ["ROS I", "C++", "Python", "Linux", "Windows"],
-    // category: "web app",
-    // github: "https://github.com/rishavchanda/Podstream",
-    // webapp: "https://podstream.netlify.app/",
+    // category: "",
+    // github: "",
+    // webapp: "",
   },
   {
     id: 1,
@@ -432,8 +460,8 @@ export const projects = [
       "SolidWorks",
     ],
     // category: "all",
-    // github: "https://github.com/rishavchanda/Project-Management-App",
-    // webapp: "https://vexa-app.netlify.app/",
+    // github: "",
+    // webapp: "",
   },
   {
     id: 2,
@@ -449,8 +477,8 @@ export const projects = [
       "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Final_vehicle.jpeg",
     tags: ["C++", "SolidWorks", "Windows"],
     // category: "web",
-    // github: "https://github.com/rishavchanda/Brain-Tumor-Detection",
-    // webapp: "https://brain-tumor.netlify.app/",
+    // github: "",
+    // webapp: "",
   },
   {
     id: 3,
@@ -463,8 +491,8 @@ export const projects = [
       "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/oldportfoliowebsite.gif",
     tags: ["HTML", "CSS", "JavaScript", "Github"],
     // category: "android app",
-    // github: "https://github.com/rishavchanda/Buckoid-Android-App",
-    // webapp: "https://play.google.com/store/apps/details?id=com.rishav.buckoid",
+    // github: "",
+    // webapp: "",
   },
   {
     id: 10,
@@ -484,74 +512,9 @@ export const projects = [
       "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/waveformproj.png",
     tags: ["C", "Linux"],
     // category: "android app",
-    // github: "https://github.com/rishavchanda/Job-finder-App",
-    // webapp: "https://github.com/rishavchanda/Job-finder-App",
+    // github: "",
+    // webapp: "",
   },
-  // {
-  //   id: 4,
-  //   title: "Whatsapp Clone",
-  //   date: "Jul 2021",
-  //   description:
-  //     "A WhatsApp clone made with React JS, Firebase, and Material UI. It has Phone Authentication, Real-time Database. It has a chat room where users can chat with each other. It has a sidebar where users can see all the chat rooms and can create a new chat room. It has a login page where users can log in with their Google account.",
-  //   image:
-  //     "https://firebasestorage.googleapis.com/v0/b/whatsapp-clone-rishav.appspot.com/o/Screenshot%20(151).png?alt=media&token=48391593-1ef0-4a8c-a92a-eb82bdf38e89",
-  //   tags: ["React Js", "Firebase", "Firestore", "Node JS"],
-  //   category: "web app",
-  //   github: "https://github.com/rishavchanda/Whatsapp-Clone-React-Js",
-  //   webapp: "https://whatsapp-clone-rishav.web.app",
-  // },
-  // {
-  //   id: 5,
-  //   title: "Todo Web App",
-  //   date: "Jun 2021",
-  //   description:
-  //     " A Todo Web App made with React JS, Redux, and Material UI. It has a login page where users can log in with their Google account. It has a sidebar where users can see all the tasks and can create a new task. It has a calendar where users can see all the tasks on a particular date. It has a search bar where users can search for a particular task.",
-  //   image:
-  //     "https://camo.githubusercontent.com/a328255ad96f861f57d25096d28018ab2656c689a1456b0d145764009bed2d1a/68747470733a2f2f666972656261736573746f726167652e676f6f676c65617069732e636f6d2f76302f622f746f646f2d6170702d63386331392e61707073706f742e636f6d2f6f2f53637265656e73686f74253230283938292e706e673f616c743d6d6564696126746f6b656e3d33643335646366322d626666322d343730382d393031632d343232383866383332386633",
-  //   tags: ["React Js", "Local Storage", "AWS Auth", "Node JS"],
-  //   category: "web app",
-  //   github: "https://github.com/rishavchanda/Todo-Web-App",
-  //   webapp: "https://rishav-react-todo.netlify.app/",
-  // },
-  // {
-  //   id: 6,
-  //   title: "Breaking Bad",
-  //   date: "Jun 2021",
-  //   description:
-  //     "A simple react app that shows the characters of the famous TV series Breaking Bad. It uses the Breaking Bad API to fetch the data. It also has a search bar to search for a particular character.",
-  //   image:
-  //     "https://camo.githubusercontent.com/cd07010cbeb90cb1b43a5d6162784326aef02210ef7d41a0f9ae043b3e392378/68747470733a2f2f666972656261736573746f726167652e676f6f676c65617069732e636f6d2f76302f622f746f646f2d6170702d63386331392e61707073706f742e636f6d2f6f2f53637265656e73686f7425323028313534292e706e673f616c743d6d6564696126746f6b656e3d65613439383630632d303435362d343333342d616435372d336239346663303333363263",
-  //   tags: ["React Js", "API", "Axios", "Node JS"],
-  //   category: "web app",
-  //   github: "https://github.com/rishavchanda/Breaking-Bad",
-  //   webapp: "https://breaking-bad-webapp.netlify.app",
-  // },
-  // {
-  //   id: 7,
-  //   title: "Quiz App",
-  //   date: "Dec 2020 - Jan 2021",
-  //   description:
-  //     "A android quiz app made with Java and Firebase. It has a login page where users can log in with their Google account. It has a sidebar where users can see all the quiz categories and can create a new quiz. It has a leaderboard where users can see the top 10 scorers. It has a search bar where users can search for a particular quiz.",
-  //   image:
-  //     "https://github-production-user-asset-6210df.s3.amazonaws.com/64485885/239726262-c1b061d1-d9d0-42ef-9f1c-0412d14bc4f6.gif",
-  //   tags: ["Java", "Android Studio", "Firebase", "Google Auth"],
-  //   category: "android app",
-  //   github: "https://github.com/rishavchanda/Quiz-Earn",
-  //   webapp: "https://github.com/rishavchanda/Quiz-Earn",
-  // },
-  // {
-  //   id: 8,
-  //   title: "Face Recognition",
-  //   date: "Jan 2021",
-  //   description:
-  //     "A Face recognition python app made with OpenCV. It uses face_recognition library to detect faces. It uses the webcam to detect faces. It also has a search bar to search for a particular face.",
-  //   image:
-  //     "https://camo.githubusercontent.com/a8b3e1ebf26d4c95f75bc6671189a3590eb67eb8332d7c7452492990e731efb9/68747470733a2f2f77617265686f7573652d63616d6f2e696e67726573732e636d68312e707366686f737465642e6f72672f356137383335396561323762643261633232336437656662306639303831306437373930383436312f363837343734373037333361326632663633366336663735363432653637363937343638373536323735373336353732363336663665373436353665373432653633366636643266363137333733363537343733326633383339333633363339333232663332333433343333333033333339333832663333333636363330363533333636333032643331333336333632326433313331363533373264333833323335333832643334363433303633333936333635333136353334333133393265363736393636",
-  //   tags: ["Python", "Keras", "TensorFlow", "VGG16", "Pickle", "React"],
-  //   category: "machine learning",
-  //   github: "https://github.com/rishavchanda/Face-Recodnition-AI-with-Python",
-  //   webapp: "https://github.com/rishavchanda/Face-Recodnition-AI-with-Python",
-  // },
 ];
 
 export const TimeLineData = [
