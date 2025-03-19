@@ -105,7 +105,7 @@ function Footer() {
           <SocialMediaIcon href={Bio.github} target="display"><GithubIcon /></SocialMediaIcon>
         </SocialMediaIcons>
         <Copyright>
-          &copy; 2024 Lim Jia Jing. All rights reserved.
+          &copy; 2025 Lim Jia Jing. All rights reserved.
         </Copyright>
 
       </FooterWrapper>

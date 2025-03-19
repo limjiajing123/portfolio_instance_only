@@ -9,7 +9,7 @@ export const Bio = {
     "I am a motivated and versatile individual, always eager to take on new challenges. With a passion for learning I am dedicated to delivering high-quality results. With a positive attitude and a growth mindset, I am ready to make a meaningful contribution and achieve great things.",
   github: "https://github.com/limjiajing123",
   resume:
-    "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Lim_Jia_Jing_Resume_NTU.pdf",
+    "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Lim_Jia_Jing_Resume_NTU_2025.pdf",
   linkedin: "https://www.linkedin.com/in/limjiajing123",
   twitter: "",
   insta: "",
@@ -323,7 +323,8 @@ export const experiences = [
     role: "Robotic Software Engineering Intern",
     company: "ST Engineering",
     date: "Jan 2023 - Aug 2023",
-    desc: ` Hands-on experience with ROS1/ROS2 navigation stack
+    desc: ` Recipient of Intern @ ST Engineering Award (The Intern @ ST Engineering Award recognises the efforts and accomplishments of outstanding interns.) 
+            Hands-on experience with ROS1/ROS2 navigation stack
             Modified and implemented SLAM algorithms (Cartographer, Gmapping) in ROS to process Velodyne LiDAR point clouds by using Wireshark for network validation and ensuring accurate environment mapping.
             Engineered and integrated SLAM, localization fusion algorithms, and map-route editor applications for autonomous mobile robots, including software development, deployment, and real-world demonstrations.
             Collaborated with a team to extract and process IMU data (heading, roll, pitch, yaw) for the SPYDER hull-climbing robot’s navigation system, integrating the readings with ROS 1 and ROS 2 APIs to enhance navigation accuracy. Contributed to developing and demonstrating visualizations in RViz based on IMU headings, showcasing real-time robot orientation to clients.
