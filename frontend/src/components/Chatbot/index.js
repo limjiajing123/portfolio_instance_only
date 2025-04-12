@@ -121,6 +121,8 @@ const ChatbotWindow = styled.div`
       background-color: rgb(5, 59, 28);
       color: #fff;
       cursor: pointer;
+      border-radius: 8px; /* 👈 this adds curved corners */
+      
       &:hover {
         background-color: rgb(33, 173, 108);
       }
