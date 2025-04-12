@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useRef } from 'react';
 import emailjs from '@emailjs/browser';
-import { Snackbar } from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
 
 const Container = styled.div`
 display: flex;
@@ -103,14 +103,32 @@ const ContactInputMessage = styled.textarea`
   }
 `
 
-const ContactButton = styled.input`
+// const ContactButton = styled.input`
+//   width: 100%;
+//   text-decoration: none;
+//   text-align: center;
+//   background: hsla(271, 100%, 50%, 1);
+//   background: linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
+//   background: -moz-linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
+//   background: -webkit-linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
+//   padding: 13px 16px;
+//   margin-top: 2px;
+//   border-radius: 12px;
+//   border: none;
+//   color: ${({ theme }) => theme.text_primary};
+//   font-size: 18px;
+//   font-weight: 600;
+// `
+
+const StyledButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   text-decoration: none;
   text-align: center;
-  background: hsla(271, 100%, 50%, 1);
   background: linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
-  background: -moz-linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
-  background: -webkit-linear-gradient(225deg, hsla(271, 100%, 50%, 1) 0%, hsla(294, 100%, 50%, 1) 100%);
   padding: 13px 16px;
   margin-top: 2px;
   border-radius: 12px;
@@ -118,31 +136,62 @@ const ContactButton = styled.input`
   color: ${({ theme }) => theme.text_primary};
   font-size: 18px;
   font-weight: 600;
-`
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
 
+const Spinner = styled.div`
+  border: 3px solid ${({ theme }) => theme.text_primary};
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
 
 
 const Contact = () => {
 
   //hooks
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);         // ✅ Snackbar state
+  const [isSending, setIsSending] = React.useState(false); // ✅ Spinner state
+  const [isSent, setIsSent] = React.useState(false);       // ✅ Sent! state  
   const form = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSending(true); // ✅ Start loading spinner
+
     emailjs.sendForm('service_bxbf90g', 'template_f3evmaf', form.current, 'LH06EkSS-wUSB1kg6')
       .then((result) => {
         setOpen(true);
+        setIsSending(false); // ✅ Stop spinner
+        setIsSent(true);     // ✅ Show "Sent!"
         form.current.reset();
+
+
+// ✅ Reset to "Send" after 3s
+        setTimeout(() => {
+          setIsSent(false);
+        }, 3000);
       }, (error) => {
         console.log(error.text);
+        setIsSending(false); // ✅ Reset if failed too
       });
   }
+  
 
 
 
   return (
-    <Container>
+    <Container id ="contact">
       <Wrapper>
         <Title>Contact</Title>
         <Desc>Feel free to reach out to me for any questions or opportunities!</Desc>
@@ -152,15 +201,29 @@ const Contact = () => {
           <ContactInput placeholder="Your Name" name="from_name" />
           <ContactInput placeholder="Subject" name="subject" />
           <ContactInputMessage placeholder="Message" rows="4" name="message" />
-          <ContactButton type="submit" value="Send" />
+          <StyledButton type="submit" disabled={isSending || isSent}>
+                {isSending ? (
+                  <>
+                    <Spinner />
+                    Sending...
+                  </>
+                ) : isSent ? (
+                  'Sent!'
+                ) : (
+                  'Send'
+                )}
+        </StyledButton>
         </ContactForm>
         <Snackbar
-          open={open}
-          autoHideDuration={6000}
-          onClose={()=>setOpen(false)}
-          message="Email sent successfully!"
-          severity="success"
-        />
+            open={open}
+            autoHideDuration={6000}
+            onClose={() => setOpen(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+        <Alert onClose={() => setOpen(false)} severity="success" sx={{ width: '100%' }}>
+          Email sent successfully!
+        </Alert>
+</Snackbar>
       </Wrapper>
     </Container>
   )
