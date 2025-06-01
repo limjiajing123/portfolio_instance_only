@@ -9,7 +9,7 @@ export const Bio = {
     "I am a motivated and versatile individual, always eager to take on new challenges. With a passion for learning I am dedicated to delivering high-quality results. With a positive attitude and a growth mindset, I am ready to make a meaningful contribution and achieve great things.",
   github: "https://github.com/limjiajing123",
   resume:
-    "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Lim_Jia_Jing_Resume_NTU_2025.pdf",
+    "/docs/Lim_Jia_Jing_Resume_2025.pdf",
   linkedin: "https://www.linkedin.com/in/limjiajing123",
   twitter: "",
   insta: "",
@@ -268,16 +268,17 @@ export const skills = [
 export const experiences = [
   {
     id: 1,
-    img: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/CTSH.png",
+    img: "/images/CTSH.webp",
     role: "Automation Software Engineer (Graduate Analsyt) (Banking Financial Services Division Payment Team)",
     company: "Cognizant Tech Solutions",
     date: "June 2024 - Present",
-    desc: ` Automated regression, smoke, sanity, system, and usability testing using Tosca for banking applications, ensuring high-quality software.
-            Tested iOS and Android banking apps using Physical Devices, Perfecto Automation, Postman (API validation & backend edits), Oracle SQL (log analysis), and SSH (PuTTY/WinSCP).
-            Deployed banking applications to UAT using Jenkins, contributing to CI/CD pipeline automation and streamlining testing workflows.
-            Ensured compliance with banking processes, industry standards, and security requirements while testing critical financial applications.
-            Collaborated with cross-functional teams using Jira and Confluence to track defects, document processes, and improve software quality.
-            Actively participated in the SDLC Agile sprint process, designing and executing test plans to optimize testing efficiency and support continuous integration.`,
+    desc: ` Automated progression, regression, smoke, sanity, system, and usability testing for critical banking applications using Tosca, ensuring consistent quality across releases.
+            Conducted functional and non-functional testing on B2B and B2C platforms (iOS, Android, Web, AS400) for apps such as TMRW and UOB Infinity, using physical devices, Perfecto, Postman, Oracle SQL (for backend validation and log analysis), and SSH (PuTTY/WinSCP).
+            Deployed defect-fixed builds from SIT to UAT environments using Jenkins, improving CI/CD pipeline efficiency and accelerating validation cycles in a secure banking infrastructure.
+            Created and executed test cases with Zephyr for Jira, ensuring end-to-end traceability, test coverage, and alignment with Agile user stories.
+            Ensured full compliance with banking processes, industry standards, and security requirements during manual and automated testing of high-stakes financial systems.
+            Collaborated with developers, business analysts, and QA teams using Jira and Confluence to track defects, document processes, and improve software quality through continuous feedback loops.
+            Actively participated in the SDLC Agile sprint process, with hands-on involvement across the entire STLC, including requirement analysis, test planning, execution, defect reporting, and test closure.`,
     skills: [
       "Tosca",
       "Jira",
@@ -291,11 +292,11 @@ export const experiences = [
       "Oracle SQL",
       "Jenkins",
     ],
-    img2: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/cognizant_event_grp_photos.jpeg",
+    img2: "/images/cognizant_event_grp_photos.webp",
   },
   {
     id: 0,
-    img: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/RRIS_Logo.jpg",
+    img: "/images/RRIS_Logo.webp",
     company: "Rehabilitation Research Institute of Singapore (RRIS)",
     date: "July 2023 - May 2024",
     desc: ` Project Title: Evaluating Navigation Among Crows Algorithm For Shared Control Of A Robotic Wheelchair (Grade: A)
@@ -315,11 +316,11 @@ export const experiences = [
       "Linux",
     ],
     doc: "https://drive.google.com/file/d/1ugUs_DtNrEL2ZHRBMkiMN1ZMMm6mPVQe/view?usp=sharing",
-    img2: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/simulation_walkway_with_obstacle.gif",
+    img2: "/images/simulation_walkway_with_obstacle.gif",
   },
   {
     id: 0,
-    img: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/st-engineering-logo.jpg",
+    img: "/images/st-engineering-logo.webp",
     role: "Robotic Software Engineering Intern",
     company: "ST Engineering",
     date: "Jan 2023 - Aug 2023",
@@ -346,7 +347,7 @@ export const experiences = [
       "Linux",
     ],
     doc: "https://drive.google.com/file/d/1ugUs_DtNrEL2ZHRBMkiMN1ZMMm6mPVQe/view?usp=sharing",
-    img2: "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Interns.jpeg",
+    img2: "/images/Interns.webp",
   },
   // {
   //   id: 2,
@@ -404,7 +405,7 @@ export const projects = [
       Automated CI/CD using GitHub Actions, building Docker images, pushing them to AWS ECR, and deploying via ECS.
       Optimized performance with Styled-Components, React’s component-based design, and efficient asset management.`,
     image:
-      "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/PortfolioWebsite2024.gif",
+      "/images/PortfolioWebsite2024.gif",
     tags: [
       "React Js",
       "HTML5",
@@ -434,7 +435,7 @@ export const projects = [
         Creation of a pipeline to test shared control amongst crowd algorithms in simulator and with real wheelchair. 
         Proven that Navigation Among Crowd Algorithm considering dynamic obstacle is unnecessary.`,
     image:
-      "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/simulation_with_rds_gui.gif",
+      "/images/simulation_with_rds_gui.gif",
     tags: ["ROS I", "C++", "Python", "Linux", "Windows"],
     // category: "",
     // github: "",
@@ -451,7 +452,7 @@ export const projects = [
         Integrate obstacle scenarios created by the team to assess the arm's capability to navigate and retrieve objects efficiently.
         Implemented custom path trajectory planning using ROS MoveIt to enhance the robotic arm's efficiency in object retrieval by taking in consideration of spatial constraints minimising potential collisions during operation.`,
     image:
-      "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/robot_arm_setup_2_motion.jpeg",
+      "/images/robot_arm_setup_2_motion.webp",
     tags: [
       "ROS I",
       "C++", 
@@ -475,7 +476,7 @@ export const projects = [
         Designed and collaborated on an efficient wiring layout for seamless integration of sensors, actuators, and the VEX controller.
         Won 2nd in the competition for search and retrieval of tennis ball.`,
     image:
-      "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/Final_vehicle.jpeg",
+      "/images/Final_vehicle.webp",
     tags: ["C++", "SolidWorks", "Windows"],
     // category: "web",
     // github: "",
@@ -489,7 +490,7 @@ export const projects = [
       `Created the website out of interest after finding out I can have a website of my own by hosting thorugh github.
        Could have spent more time to make it more responsive, interactive and beautiful but oh wells study comes first.`,
     image:
-      "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/oldportfoliowebsite.gif",
+      "images/oldportfoliowebsite.gif",
     tags: ["HTML", "CSS", "JavaScript", "Github"],
     // category: "android app",
     // github: "",
@@ -510,7 +511,7 @@ export const projects = [
         Implemented features such as file I/O for storing user settings and error handling for input validation.
         Demonstrated proficiency in multi-process communication, signal handling, and program shutdown in an orderly manner.`,
     image:
-      "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/waveformproj.png",
+      "/images/waveformproj.webp",
     tags: ["C", "Linux"],
     // category: "android app",
     // github: "",
