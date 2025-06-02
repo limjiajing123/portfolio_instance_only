@@ -1,23 +1,34 @@
 // portfolioKnowledge.js
 const portfolioKnowledge = `
-Jia JIng is from NANYANG TECHNOLOGICAL UNIVERSITY, SINGAPORE and graguated in May 2024 with a Bachelor of Engineering (Honours Distinction), Mechanical Engineering Specialisation in Robotics and Mechatronics
+Jia Jing is from NANYANG TECHNOLOGICAL UNIVERSITY, SINGAPORE and graguated in May 2024 with a Bachelor of Engineering (Honours Distinction), Mechanical Engineering Specialisation in Robotics and Mechatronics
 Relevant Coursework: Robotics, Mechatronics Engineering Design, Machine Intelligence, Realtime Software for Mechatronics System, Introduction to Data Science and Artificial Intelligence, Introduction to 
 Computational Thinking, Introduction to Digital Communications & Networking, Introduction to Mechatronics Systems Design, Mechatronics System Interfacing
 
-Languages: Proficient in English & Chinese; Basic – Malay & Thai
+Summary: Jia Jing is a highly motivated and detail-oriented graduate analyst with a strong foundation in automation software testing, robotics, and mechatronics. With hands-on experience in both manual and automated testing for critical banking applications, Jia Jing has demonstrated proficiency in various programming languages, frameworks, and tools. Their academic background includes significant projects in robotics and machine intelligence, showcasing their ability to apply theoretical knowledge to practical challenges. 
+        Jia Jing is committed to delivering high-quality software solutions and continuously improving processes through collaboration and innovation.
 
-His skills are:
-Computer skills: Linux, Windows, ROS I & ROS II, Python, C++, C#, C, Golang, Java, JavaScript, React.JS, .NET, SpringBoot, CSS, HTML, Docker, SQL, Jira, Confluence, GitHub, Postman,
-Putty, Figma, SolidWorks, AWS Cloud Practitioner (On-going), Pandas, Microsoft Office
+Technical Skills:
+Programming Language: Python, C++, C, Golang, Java, JavaScript, SQL. HTML, CSS
+Frameworks & Libraries: ReactJS, .NET, SpringBoot, Pandas
+Cloud & Devops Tools: AWS, Docker, Terraform, Jenkins
+Tools & Platforms: Linux, Windows, ROSI&II, Git, GitHub, Jira, Confluence, Postman, Putty, Figma, Tosca,
+Postman, Microsoft Office
+CAD & Design Tools: SolidWorks, Figma
+Database: MySQL, Oracle SQL
+Database Management: MySQL, Oracle SQL
+
+Language: Proficient in English & Chinese; Basic proficiency in Malay & Thai
 
 Work experience:
 Cognizant Technology Solutions, Singapore from June 2024 to present
 Graduate Analyst (Automation Software Tester) (Banking Financial Services, UOB)
-    • Automated regression, smoke, sanity, system, and usability testing using Tosca for banking applications, ensuring high-quality software.
-    • Tested iOS and Android banking apps using Physical Devices, Perfecto, Postman (for API validation and backend edits), Oracle SQL (for log analysis), and SSH with PuTTY (to refresh microservice caches).
-    • Learned and applied banking processes while testing critical financial applications, ensuring compliance with industry standards and security requirements.
-    • Collaborated with cross-functional teams using Jira and Confluence to track defects, document processes, and improve software quality.
-    • Actively participated in the SDLC Agile sprint process, designing and executing test plans to optimize testing efficiency and support continuous integration.
+    • Automated progression, regression, smoke, sanity, system, and usability testing for critical banking applications using Tosca, ensuring consistent quality across releases.
+    • Conducted functional and non-functional testing on B2B and B2C platforms (iOS, Android, Web, AS400) for apps such as TMRW and UOB Infinity, using physical devices, Perfecto, Postman, Oracle SQL (for backend validation and log analysis), and SSH (PuTTY/WinSCP).
+    • Deployed defect-fixed builds from SIT to UAT environments using Jenkins, improving CI/CD pipeline efficiency and accelerating validation cycles in a secure banking infrastructure.
+    • Created and executed test cases with Zephyr for Jira, ensuring end-to-end traceability, test coverage, and alignment with Agile user stories.
+    • Ensured full compliance with banking processes, industry standards, and security requirements during manual and automated testing of high-stakes financial systems.
+    • Collaborated with developers, business analysts, and QA teams using Jira and Confluence to track defects, document processes, and improve software quality through continuous feedback loops.
+    • Actively participated in the SDLC Agile sprint process, with hands-on involvement across the entire STLC, including requirement analysis, test planning, execution, defect reporting, and test closure.
 
 REHABILITATION RESEARCH INSTITUTE OF SINGAPORE (RRIS) & NANYANG TECHNOLOGICAL UNIVERSITY as a Undergraduate student researcher from AUG 2023 - MAY 2024
 Final Year Project 
@@ -32,43 +43,38 @@ Project Title: Evaluating Navigation Among Crows Algorithm For Shared Control Of
 
 ST Engineering Land Systems, Singapore from June 2023 to August 2023
 Robotics Software Intern 
-    • Programming Language used mainly C++, Python, Golang
-    • Hands-on experience with ROS1/ROS2 navigation stack
-    • Modified and implemented SLAM algorithms (Cartographer, Gmapping) in ROS to process Velodyne LiDAR point clouds by using Wireshark for network validation and ensuring accurate environment mapping.
-    • Engineered and integrated SLAM, localization fusion algorithms, and map-route editor applications for autonomous mobile robots, including software development, deployment, and real-world demonstrations.
-    • Collaborated with a team to extract and process IMU data (heading, roll, pitch, yaw) for the SPYDER hull-climbing robot’s navigation system, integrating the readings with ROS 1 and ROS 2 APIs to enhance navigation accuracy. Contributed to developing and demonstrating visualizations in RViz based on IMU headings, showcasing real-time robot orientation to clients.
-    • Developed Go executables for a robotic management system and integrated them into Docker images to enhance service efficiency and performance. Containerized services such as GUIAPI, MySQL for data logging, FleetAPI, and health check services, configuring each container with unique static IPs under the same private Docker network for secure and reliable inter-service communication.
-    • Integrated industrial servo motor by interfacing a controller, ensuring seamless communication and control.
-    • Developed a comprehensive wiring diagram, meticulously planning and documenting the electrical connections for the motor system to the controller.
-    Recipient of Intern @ ST Engineering in AUG 2023
-    The Intern @ ST Engineering Award recognises the efforts and accomplishments of outstanding interns. 
+    • Developed robotics software in C++, Python, and Golang, contributing to autonomous robot navigation using ROS 1/2, SLAM systems.
+    • Integrated and customized SLAM algorithms (Cartographer, Gmapping) by ingesting Velodyne LiDAR data, using Wireshark to verify and troubleshoot sensor-level network communication. Developed data-processing functions to optimize and format point clouds for accurate 2D/3D mapping.
+    • Created RViz plugins and utilities allowing users to interactively define virtual map boundaries, generating dynamic point cloud walls to confine robot navigation within user-defined zones.
+    • Extracted and processed IMU data (heading, roll, pitch, yaw) for the SPYDER hull-climbing robot, integrating readings into ROS and visualizing live orientation in RViz for real-time feedback and client demonstration.
+    • Developed Go executables and containerized multiple microservices (e.g., GUIAPI, MySQL, FleetAPI, health checks) into Docker images and containers with static IPs on a private Docker network, enabling secure and reliable inter-service communication.
+    • Integrated industrial servo motors with robotic controllers and designed a detailed wiring diagram documenting electrical connections, ensuring precise hardware control, safe deployment, and effective troubleshooting.
 
 Projects:
 
 Portfolio Website (on going)				                                                           		  
-    • Utilized React and Styled-Components to create a dynamic and visually appealing portfolio website, ensuring a seamless user experience across various devices.
-    • Implemented EmailJS to handle form submissions, allowing users to send emails directly from the website without needing a backend server.
-    • Used Styled-Components to manage CSS-in-JS, enabling scoped and dynamic styling based on the application's theme.
-    • Ensured fast load times and smooth interactions by optimizing images and leveraging React's component-based architecture.
-    • Hosted the portfolio website on GitHub Pages, making it easily accessible and maintainable with continuous integration and deployment.
+    • Developed and deployed a React-based portfolio website with an AI chatbot using Express.js for the backend, hosted on AWS ECS.
+    • Designed a frontend-backend architecture, where the backend handles API calls to OpenRouter for chatbot(DeepSeek) responses.
+    • Built a secure AWS infrastructure with a VPC, private subnets for ECS tasks, an ALB for frontend traffic routing, and VPC endpoints for ECR image pulling without a NAT.
+    • Configured a NAT instance to allow backend ECS tasks to access external APIs while maintaining private network security.
+    • Automated CI/CD using GitHub Actions, building Docker images, pushing them to AWS ECR, and deploying via ECS.
+    • Optimized performance with Styled-Components, React’s component-based design, and efficient asset management.
+
 Machine Intelligence from JAN 2024 to MAY 2024
 Project title: Product Development Strategies for Vehicle Customisation & Personalisation 
-    • Conducted a comprehensive market survey on vehicle customization preferences, analyzing data from 50 participants using Python, Pandas, and visualization tools.
-    • Applied Machine Learning techniques, including K-modes clustering for unsupervised learning, to segment customers based on demographics and preferences.
-    • Developed a predictive model with supervised learning (Multinomial Naive Bayes) to forecast customization likelihood, achieving promising accuracy.
-    • Extracted actionable insights through Association Rule Mining, optimizing strategies for vehicle personalization, and enhancing targeted marketing efforts.
+    •Collected and analyzed market survey data (n=50) on vehicle customization preferences using Python, Pandas, and data visualization libraries.
+    • Performed K-modes clustering to segment customers based on demographic and behavioral patterns, identifying key user personas for personalization strategies.
+    • Built a Multinomial Naive Bayes predictive model to forecast customization likelihood, contributing to more accurate targeting in product development.
+    • Applied Association Rule Mining (e.g., Apriori algorithm) to uncover cross-preference patterns, generating actionable insights to support data-driven marketing and design decisions.
 
 RealTime Software for Mechatronics System from JAN 2024 to MAY 2024
 Project title: Waveform Generator in C programming Language
-    • Implemented precise D/A output generation for oscilloscope display.
-    • Integrated keyboard input for adjusting settings and controlling waveform parameters.
-    • Utilized command-line arguments for initial setup and configuration.
-    • Supported loading arbitrary waveforms from disk for enhanced waveform versatility.
-    • Ensured uninterrupted output and synchronized visual and auditory cues for user feedback.
-    • Utilized multi-threaded processes, timers, and interrupts for real-time operation.
-    • Modularized code into subroutines for better maintainability and scalability.
-    • Implemented features such as file I/O for storing user settings and error handling for input validation.
-    • Demonstrated proficiency in multi-process communication, signal handling, and program shutdown in an orderly manner.
+    • Developed a real-time waveform generator in C for oscilloscope visualization, implementing precise D/A output control for waveform accuracy and signal fidelity.
+    • Designed and integrated multi-threaded processes, timers, and interrupts to enable real-time system responsiveness and continuous waveform output.
+    • Built interactive CLI and keyboard input handling for runtime waveform configuration, including user-defined parameters via command-line arguments.
+    • Implemented support for loading arbitrary waveform data from disk to enhance signal variety and system flexibility.
+    • Applied robust file I/O, input validation, and modular programming, ensuring maintainable code structure and clean program shutdown through signal handling and inter-process communication.
+    • Delivered synchronized visual and auditory feedback, ensuring a seamless real-time user experience across multiple hardware outputs.
 
 LEADERSHIP EXPERIENCE / CO-CURRICULAR ACTIVITIES / COMMUNITY SERVICES
 Table Tennis (Nanyang Technological University, Hall 12) from JAN 2021 to JAN 2022
@@ -81,7 +87,7 @@ Captain
     • Planned and organised cohesive events for strengthening of bond within the team.
     • Led team to participate in North Zone Basketball competition for 4 years.
 
-Visit the portfolio website: https://limjiajing123.github.io/portfolio/
+Visit the portfolio website: https://limjiajing.com
 Visit the LinkedIn profile: https://www.linkedin.com/in/limjiajing123
 Email: limjiajing123@gmail.com
 HP Number: 87845169
