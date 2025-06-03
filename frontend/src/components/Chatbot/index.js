@@ -139,6 +139,9 @@ const ChatBubbleUser = styled.div`
   max-width: 70%;
   align-self: flex-end;
   margin: 5px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
 const ChatBubbleBot = styled.div`
@@ -149,6 +152,9 @@ const ChatBubbleBot = styled.div`
   max-width: 70%;
   align-self: flex-start;
   margin: 5px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
 const TypingIndicatorContainer = styled.div`
@@ -191,8 +197,10 @@ const Chatbot = () => {
   const [userMessage, setUserMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [isBotTyping, setIsBotTyping] = useState(false);
+
   const windowRef = useRef(null);
   const chatBodyRef = useRef(null);
+  const inputRef = useRef(null); // ✅ new input ref
 
   const toggleChatbot = () => setIsOpen(!isOpen);
 
@@ -227,6 +235,7 @@ const Chatbot = () => {
       ]);
     } finally {
       setIsBotTyping(false);
+      inputRef.current?.focus(); // ✅ refocus input
     }
   };
 
@@ -308,11 +317,11 @@ const Chatbot = () => {
           </div>
           <ChatInput onSubmit={handleSubmit}>
             <input
+              ref={inputRef}
               type="text"
               value={userMessage}
               onChange={handleInputChange}
               placeholder="Type a message..."
-              disabled={isBotTyping}
             />
             <button type="submit" disabled={isBotTyping}>Send</button>
           </ChatInput>
