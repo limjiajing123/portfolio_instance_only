@@ -4,12 +4,13 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const portfolioKnowledge = require('./portfolioKnowledge');
+const redisClient = require('./redis'); // Import Redis client
 
 const app = express();
 const port = 5000;
 
 const corsOptions = {
-  origin: 'https://www.limjiajing.com',  // Frontend domain
+  origin: ['https://www.limjiajing.com'],  // Frontend domain
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,  // Allow credentials (cookies) to be sent
@@ -38,6 +39,13 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
+    // Check Redis cache
+    const cachedResponse = await redisClient.get(message);
+    if (cachedResponse) {
+      console.log('Returning cached response');
+      return res.json({ botResponse: cachedResponse });
+    }
+
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
@@ -63,10 +71,16 @@ app.post('/api/chat', async (req, res) => {
       }
     );
 
+
     if (response.data.choices && response.data.choices.length > 0) {
-      res.json({ botResponse: response.data.choices[0].message.content });
+      const botReply = response.data.choices[0].message.content;
+
+      // Save to cache (expire in 1 hour)
+      await redisClient.set(message, botReply, { EX: 3600 });
+
+      return res.json({ botResponse: botReply });
     } else {
-      res.status(500).json({ error: 'No valid response from AI' });
+      return res.status(500).json({ error: 'No valid response from AI' });
     }
   } catch (error) {
     console.error('Error interacting with OpenRouter API:', error);
