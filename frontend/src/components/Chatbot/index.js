@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { FaRobot, FaArrowsAlt, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
 
-// Styled button for the chatbot icon (always on top)
+// Styled components
 const ChatbotButton = styled.button`
   position: fixed;
   bottom: 30px;
@@ -21,17 +21,16 @@ const ChatbotButton = styled.button`
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s;
-  
+
   &:hover {
     background-color: #0056b3;
   }
-  
+
   &:focus {
     outline: none;
   }
 `;
 
-// Styled chatbot window with responsive design
 const ChatbotWindow = styled.div`
   position: fixed;
   bottom: 30px;
@@ -48,13 +47,11 @@ const ChatbotWindow = styled.div`
   z-index: 1000;
   resize: both;
 
-  /* Responsive adjustments for mobile screens */
   @media (max-width: 600px) {
     width: 90%;
     height: 70%;
     right: 30px;
-    bottom: calc(30px + 60px); /* positions window above the chatbot icon */
-    border-radius: 15px;
+    bottom: calc(30px + 60px);
   }
 
   .resize-handle {
@@ -83,7 +80,6 @@ const ChatbotWindow = styled.div`
     align-items: center;
   }
 
-  /* Clear button positioned absolutely on the right of header */
   .chat-header button {
     position: absolute;
     right: 10px;
@@ -101,36 +97,40 @@ const ChatbotWindow = styled.div`
     display: flex;
     flex-direction: column;
   }
+`;
 
-  .chat-input {
-    display: flex;
-    border-top: 1px solid #ccc;
-    padding: 5px;
+const ChatInput = styled.form`
+  display: flex;
+  border-top: 1px solid #ccc;
+  padding: 5px;
 
-    input {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      outline: none;
-      font-size: 1em;
+  input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 1em;
+  }
+
+  button {
+    padding: 10px;
+    border: none;
+    background-color: rgb(5, 59, 28);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: rgb(33, 173, 108);
     }
 
-    button {
-      padding: 10px;
-      border: none;
-      background-color: rgb(5, 59, 28);
-      color: #fff;
-      cursor: pointer;
-      border-radius: 8px; /* 👈 this adds curved corners */
-      
-      &:hover {
-        background-color: rgb(33, 173, 108);
-      }
+    &:disabled {
+      background-color: grey;
+      cursor: not-allowed;
     }
   }
 `;
 
-// Styled chat bubbles for user and bot
 const ChatBubbleUser = styled.div`
   background-color: #d1e7dd;
   color: #0f5132;
@@ -151,7 +151,6 @@ const ChatBubbleBot = styled.div`
   margin: 5px 0;
 `;
 
-// Typing indicator (three animated dots)
 const TypingIndicatorContainer = styled.div`
   display: flex;
   align-items: center;
@@ -164,12 +163,15 @@ const Dot = styled.div`
   border-radius: 50%;
   margin: 0 2px;
   animation: blink 1.4s infinite both;
+
   &:nth-child(2) {
     animation-delay: 0.2s;
   }
+
   &:nth-child(3) {
     animation-delay: 0.4s;
   }
+
   @keyframes blink {
     0%, 80%, 100% { opacity: 0; }
     40% { opacity: 1; }
@@ -190,22 +192,22 @@ const Chatbot = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const windowRef = useRef(null);
+  const chatBodyRef = useRef(null);
 
-  const toggleChatbot = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleChatbot = () => setIsOpen(!isOpen);
 
-  // Handle input change
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     setUserMessage(e.target.value);
-  };
+  }, []);
 
-  // Handle form submission (Enter key or clicking Send)
+  const handleClear = useCallback(() => {
+    setChatHistory([]);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (userMessage.trim() === '') return;
+    if (userMessage.trim() === '' || isBotTyping) return;
 
-    // Save message and clear input immediately
     const messageToSend = userMessage;
     setUserMessage('');
     setChatHistory((prev) => [...prev, { sender: 'user', message: messageToSend }]);
@@ -213,29 +215,35 @@ const Chatbot = () => {
 
     try {
       const response = await axios.post('https://limjiajing.com/api/chat', { message: messageToSend });
-      console.log('Backend response:', response.data);
-      setIsBotTyping(false);
       setChatHistory((prev) => [
         ...prev,
         { sender: 'bot', message: response.data.botResponse }
       ]);
     } catch (error) {
-      setIsBotTyping(false);
       console.error('Error sending message to backend:', error);
-      // Fallback message if API fails
       setChatHistory((prev) => [
         ...prev,
         { sender: 'bot', message: 'I\'m sorry, I am having trouble right now. Please try again later.' }
       ]);
+    } finally {
+      setIsBotTyping(false);
     }
   };
 
-  // Clear chat history
-  const handleClear = () => {
-    setChatHistory([]);
-  };
+  useEffect(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+  }, [chatHistory, isBotTyping]);
 
-  // Resize functionality with top-left resize handle
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   useEffect(() => {
     const handleMouseDown = (e) => {
       const startX = e.clientX;
@@ -261,7 +269,9 @@ const Chatbot = () => {
 
     if (windowRef.current) {
       const resizeHandle = windowRef.current.querySelector('.resize-handle');
-      resizeHandle.addEventListener('mousedown', handleMouseDown);
+      if (resizeHandle) {
+        resizeHandle.addEventListener('mousedown', handleMouseDown);
+      }
     }
   }, [isOpen]);
 
@@ -282,7 +292,7 @@ const Chatbot = () => {
               <FaTrash size={20} />
             </button>
           </div>
-          <div className="chat-body">
+          <div className="chat-body" ref={chatBodyRef}>
             {chatHistory.map((chat, index) =>
               chat.sender === 'user' ? (
                 <ChatBubbleUser key={index}>{chat.message}</ChatBubbleUser>
@@ -296,17 +306,16 @@ const Chatbot = () => {
               </ChatBubbleBot>
             )}
           </div>
-          <div className="chat-input">
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flex: 1 }}>
-              <input
-                type="text"
-                value={userMessage}
-                onChange={handleInputChange}
-                placeholder="Type a message..."
-              />
-              <button type="submit">Send</button>
-            </form>
-          </div>
+          <ChatInput onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={userMessage}
+              onChange={handleInputChange}
+              placeholder="Type a message..."
+              disabled={isBotTyping}
+            />
+            <button type="submit" disabled={isBotTyping}>Send</button>
+          </ChatInput>
         </ChatbotWindow>
       )}
     </>
