@@ -49,7 +49,7 @@ app.post('/api/chat', async (req, res) => {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'deepseek/deepseek-chat:free', // Change to Deepseek R1
+        model: 'deepseek/deepseek-chat-v3.1:free', // Change to Deepseek R1
         messages: [
           {
             role: 'system',
