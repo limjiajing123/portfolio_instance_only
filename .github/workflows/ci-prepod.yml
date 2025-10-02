@@ -27,9 +27,9 @@ jobs:
           pip install pytest requests
 
       # 4. Build and run containers for backend, frontend, redis
-      - name: Start services with docker-compose
+      - name: Start services with docker compose
         run: |
-          docker-compose -f docker-compose.preprod.yml up -d --build
+          docker compose -f docker-compose.preprod.yml up -d --build
           # wait a bit for services to boot
           sleep 15
           docker ps -a
@@ -41,4 +41,4 @@ jobs:
       # 6. Tear down containers
       - name: Shutdown services
         if: always()
-        run: docker-compose -f docker-compose.preprod.yml down
+        run: docker compose -f docker-compose.preprod.yml down
