@@ -1,61 +1,44 @@
-name: Pre-Production Smoke Tests
+name: Preproduction CI Smoke Tests
 
 on:
   push:
     branches:
-      - preproduction   # only run on preproduction branch
+      - preproduction   # only run this workflow when pushing to preproduction branch
 
 jobs:
   preprod-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      # 1. Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Set up Python (for pytest)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
+      # 3. Install pytest + requests
       - name: Install test dependencies
-        run: pip install pytest requests
-
-      - name: Build Backend Docker Image
-        run: docker build -t backend ./backend
-
-      - name: Build Frontend Docker Image
-        run: docker build -t frontend ./frontend
-
-      - name: Run Backend Container
-        run: docker run -d -p 5000:5000 --name backend backend
-
-      - name: Run Frontend Container
-        run: docker run -d -p 8080:80 --name frontend frontend
-
-      - name: Wait for services
         run: |
-          for i in {1..30}; do
-            if curl -s http://localhost:5000/health && curl -s http://localhost:8080; then
-              echo "Services are up!"
-              exit 0
-            fi
-            echo "Waiting for services..."
-            sleep 3
-          done
-          echo "Services failed to start"
-          exit 1
+          python -m pip install --upgrade pip
+          pip install pytest requests
 
-      - name: Run Smoke Tests
-        run: pytest -v tests/smoke/
+      # 4. Build and run containers for backend, frontend, redis
+      - name: Start services with docker-compose
+        run: |
+          docker-compose -f docker-compose.preprod.yml up -d --build
+          # wait a bit for services to boot
+          sleep 15
+          docker ps -a
 
-      # Auto-merge into main only if tests pass
-      - name: Merge preproduction into main
-        if: success()
-        uses: devops-infra/action-pull-request@v0.5.5
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: preproduction
-          target_branch: main
-          title: "Auto-merge preproduction → main"
-          body: "Preprod tests passed, merging into main for deployment."
+      # 5. Run smoke tests
+      - name: Run smoke tests
+        run: pytest -v tests/
+
+      # 6. Tear down containers
+      - name: Shutdown services
+        if: always()
+        run: docker-compose -f docker-compose.preprod.yml down
