@@ -1,7 +1,7 @@
 import requests
 
 def test_frontend_homepage():
-    r = requests.get("http://localhost:8080")
+    r = requests.get("http://localhost:82")
     assert r.status_code == 200
     assert "Portfolio" in r.text  # adjust to your homepage content
 
