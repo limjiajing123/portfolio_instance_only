@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: test                          # ✅ ensure test mode
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}  # safe for staging
 
     steps:
@@ -53,7 +52,7 @@ jobs:
 
       # 6. Run smoke tests
       - name: Run smoke tests
-        run: pytest -v tests/
+        run: NODE_ENV=test pytest -v tests/
 
       # 7. Tear down
       - name: Shutdown services
