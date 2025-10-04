@@ -6,6 +6,13 @@ const cors = require('cors');
 const portfolioKnowledge = require('./portfolioKnowledge');
 const redisClient = require('./redis'); // Import Redis client
 
+
+// ✅ Load axios mock only in test environment
+if (process.env.NODE_ENV === "test") {
+  console.log("Running in test mode: axios is mocked");
+  require('./axiosMock');   // <-- create this file
+}
+
 const app = express();
 const port = 5000;
 
@@ -22,6 +29,7 @@ app.use(express.json());
 
 // Debugging logs
 console.log("Server starting...");
+console.log("NODE_ENV:", process.env.NODE_ENV || "not set");
 console.log("OpenRouter API Key:", process.env.OPENROUTER_API_KEY ? "Loaded" : "Not Found");
 
 // Chatbot endpoint that handles user messages
