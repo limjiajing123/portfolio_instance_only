@@ -34,11 +34,25 @@ jobs:
           sleep 15
           docker ps -a
 
-      # 5. Run smoke tests
+      # 5. Check backend health endpoint
+      - name: Backend health check
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:5000/health | grep -q "ok"; then
+              echo "Backend healthy ✅"
+              exit 0
+            fi
+            echo "Waiting for backend..."
+            sleep 3
+          done
+          echo "Backend health check failed ❌"
+          exit 1
+
+      # 6. Run smoke tests
       - name: Run smoke tests
         run: pytest -v tests/
 
-      # 6. Tear down containers
+      # 7. Tear down containers
       - name: Shutdown services
         if: always()
         run: docker compose -f docker-compose.preprod.yml down
