@@ -88,6 +88,11 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
+// ✅ Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
 });
