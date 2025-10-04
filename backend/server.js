@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+console.log("NODE_ENV =", process.env.NODE_ENV);
+
 // ✅ Load axios mock only in test environment
 if (process.env.NODE_ENV === "test") {
   console.log("Running in test mode: axios is mocked");
@@ -11,9 +13,6 @@ const axios = require('axios');
 const cors = require('cors');
 const portfolioKnowledge = require('./portfolioKnowledge');
 const redisClient = require('./redis'); // Import Redis client
-
-
-
 
 const app = express();
 const port = 5000;
