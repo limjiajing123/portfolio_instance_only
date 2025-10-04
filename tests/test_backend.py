@@ -11,15 +11,21 @@ def test_chatbot_missing_message():
     assert "error" in response.json()
 
 def test_chatbot_with_message():
+    """Should return a botResponse when message is provided"""
     payload = {"message": "Hello"}
 
-    with requests_mock.Mocker() as m:
-        # Mock the POST to OpenRouter API
-        m.post('https://openrouter.ai/api/v1/chat/completions', json={
-            "choices": [{"message": {"content": "Hi there!"}}]
-        })
+    # Patch the requests.post inside your server code (axios or requests) to mock OpenRouter API
+    with requests_mock.Mocker(real_http=True) as m:
+        # Mock only the external OpenRouter API call
+        m.post(
+            'https://openrouter.ai/api/v1/chat/completions',
+            json={"choices": [{"message": {"content": "Hi there!"}}]}
+        )
 
+        # Now your local server can still be called
         response = requests.post(f"{BASE_URL}/api/chat", json=payload)
+
         assert response.status_code == 200
-        assert "botResponse" in response.json()
-        assert response.json()["botResponse"] == "Hi there!"
+        data = response.json()
+        assert "botResponse" in data
+        assert data["botResponse"] == "Hi there!"
