@@ -1,4 +1,6 @@
 import requests
+import requests_mock
+import pytest
 
 BASE_URL = "http://localhost:5000"
 
@@ -9,12 +11,15 @@ def test_chatbot_missing_message():
     assert "error" in response.json()
 
 def test_chatbot_with_message():
-    """Should return a botResponse when message is provided"""
     payload = {"message": "Hello"}
-    response = requests.post(f"{BASE_URL}/api/chat", json=payload)
-    # API should return success (200)
-    assert response.status_code == 200
-    data = response.json()
-    assert "botResponse" in data
-    assert isinstance(data["botResponse"], str)
-    assert len(data["botResponse"]) > 0
+
+    with requests_mock.Mocker() as m:
+        # Mock the POST to OpenRouter API
+        m.post('https://openrouter.ai/api/v1/chat/completions', json={
+            "choices": [{"message": {"content": "Hi there!"}}]
+        })
+
+        response = requests.post(f"{BASE_URL}/api/chat", json=payload)
+        assert response.status_code == 200
+        assert "botResponse" in response.json()
+        assert response.json()["botResponse"] == "Hi there!"
