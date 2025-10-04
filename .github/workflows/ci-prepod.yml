@@ -9,6 +9,9 @@ jobs:
   preprod-tests:
     runs-on: ubuntu-latest
 
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}  # load secret as env var
+
     steps:
       # 1. Checkout repository
       - name: Checkout code
