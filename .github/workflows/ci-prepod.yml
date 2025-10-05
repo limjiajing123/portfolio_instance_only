@@ -69,3 +69,4 @@ jobs:
         with:
           workflow: "deploy.yml"  # deploy workflow file
           ref: main               # deploy runs on main branch
+          token: ${{ secrets.GH_PAT }}

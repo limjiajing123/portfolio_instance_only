@@ -1,4 +1,4 @@
-name: Deploy to Main EC2
+name: Build and Deploy to EC2
 
 on:
   workflow_dispatch:   # triggered manually or by preprod
