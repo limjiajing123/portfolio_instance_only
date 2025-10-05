@@ -243,12 +243,12 @@ export const skills = [
       {
         name: "Confluence",
         image:
-          "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/confluenece_logo.png",
+          "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/confluence/confluence-original.svg",
       },
       {
         name: "Tosca",
         image:
-          "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/tricentis-tosca-logo.png",
+          "https://www.tricentis.com/_next/image?url=https%3A%2F%2Fbe.tricentis.com%2Fmedia-assets%2F2022%2F08%2Ftricentis-Logo.png&w=256&q=75",
       },
       {
         name: "Jenkins",
@@ -258,7 +258,7 @@ export const skills = [
       {
         name: "Oracle SQL",
         image:
-          "https://skillicons.dev/icons?i=Oracle",
+          "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sqldeveloper/sqldeveloper-original.svg",
       },
       
     ],
@@ -363,7 +363,7 @@ export const experiences = [
 export const education = [
   {
     id: 0,
-    img: "https://www.ntu.edu.sg/ResourcePackages/NTU/assets/images/NTU_Logo.png",
+    img: "https://www.logo.wine/a/logo/Nanyang_Technological_University/Nanyang_Technological_University-Logo.wine.svg",
     school: "Nanyang Technology University, Singapore",
     date: "Aug 2020 - Jun 2024",
     grade: "4.06/5.00 CGPA",
