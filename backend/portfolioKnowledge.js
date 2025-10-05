@@ -30,6 +30,7 @@ Graduate Analyst (Automation Software Tester) (Banking Financial Services, UOB)
     • Ensured full compliance with banking processes, industry standards, and security requirements during manual and automated testing of high-stakes financial systems.
     • Collaborated with developers, business analysts, and QA teams using Jira and Confluence to track defects, document processes, and improve software quality through continuous feedback loops.
     • Actively participated in the SDLC Agile sprint process, with hands-on involvement across the entire STLC, including requirement analysis, test planning, execution, defect reporting, and test closure.
+    many projects like EDP UOBPay NZOC, UOB Infinity, TMRW
 
 REHABILITATION RESEARCH INSTITUTE OF SINGAPORE (RRIS) & NANYANG TECHNOLOGICAL UNIVERSITY as a Undergraduate student researcher from AUG 2023 - MAY 2024
 Final Year Project 
