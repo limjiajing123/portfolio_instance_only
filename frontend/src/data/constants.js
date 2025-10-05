@@ -363,7 +363,7 @@ export const experiences = [
 export const education = [
   {
     id: 0,
-    img: "https://www.ntu.edu.sg/images/default-source/corporate/ntu_logo.png?sfvrsn=b5dd1d82_5",
+    img: "https://www.ntu.edu.sg/ResourcePackages/NTU/assets/images/NTU_Logo.png",
     school: "Nanyang Technology University, Singapore",
     date: "Aug 2020 - Jun 2024",
     grade: "4.06/5.00 CGPA",
