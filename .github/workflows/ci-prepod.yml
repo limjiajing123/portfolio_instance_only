@@ -32,7 +32,7 @@ jobs:
       # 4. Build & start services
       - name: Start services with docker compose
         run: |
-          docker compose -f docker-compose.preprod.yml up -d --build
+          NODE_ENV=test docker compose -f docker-compose.preprod.yml up -d --build
           sleep 15
           docker ps -a
 
@@ -52,8 +52,10 @@ jobs:
 
       # 6. Run smoke tests
       - name: Run smoke tests
-        run: NODE_ENV=test pytest -v tests/
-
+        run:  |
+          export NODE_ENV=test
+          pytest -v tests/
+          
       # 7. Tear down
       - name: Shutdown services
         if: always()
