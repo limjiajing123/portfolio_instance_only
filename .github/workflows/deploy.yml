@@ -23,6 +23,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0   # ✅ Fetch full commit history for merging
+          token: ${{ secrets.GH_PAT }}  # Personal Access Token (Classic) with repo permissions
 
       # === Step 2: Fetch preproduction branch ===
       - name: Fetch preproduction branch
