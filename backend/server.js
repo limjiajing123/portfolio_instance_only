@@ -2,10 +2,10 @@ require('dotenv').config();
 
 console.log("NODE_ENV =", process.env.NODE_ENV);
 
-// ✅ Load axios mock only in test environment
+// ✅ Only patch axios mock; still start Express normally
 if (process.env.NODE_ENV === "test") {
   console.log("Running in test mode: axios is mocked");
-  require('./axiosMock');   // <-- create this file
+  require('./axiosMock');
 }
 
 const express = require('express');
