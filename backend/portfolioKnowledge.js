@@ -16,6 +16,7 @@ Postman, Microsoft Office
 CAD & Design Tools: SolidWorks, Figma
 Database: MySQL, Oracle SQL
 Database Management: MySQL, Oracle SQL
+Testing Tools: Tosca, Zephyr for Jira, Perfecto, Pytest, Selenium, Playwright
 
 Language: Proficient in English & Chinese; Basic proficiency in Malay & Thai
 
