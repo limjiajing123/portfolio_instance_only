@@ -14,7 +14,6 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=production             # ✅ set production mode
-      - OPENROUTER_API_KEY=dummy-key   # dummy key for testing only
     depends_on:
       - redis
     networks:
