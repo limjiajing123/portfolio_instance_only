@@ -1,7 +1,15 @@
 name: Build and Deploy to EC2
 
 on:
-  workflow_dispatch:   # triggered manually or by preprod
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Trigger deployment'
+        required: true
+        default: 'true'
 
 jobs:
   deploy:
