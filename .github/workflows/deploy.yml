@@ -1,27 +1,33 @@
 name: Build and Deploy to EC2
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      deploy:
-        description: 'Trigger deployment'
-        required: true
-        default: 'true'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main branch
+      # === STEP 1: Checkout Preproduction and Merge into Main ===
+      - name: Checkout preproduction branch
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: preproduction
+          token: ${{ secrets.PAT_TOKEN }}  # Personal Access Token (Classic) with repo permissions
 
-      # AWS Credentials
+      - name: Merge preproduction into main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git fetch origin main
+          git checkout main
+          git merge preproduction --no-edit
+          git push origin main
+
+      # === STEP 2: Configure AWS Credentials ===
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -29,28 +35,28 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-1
 
-      # Login to ECR
+      # === STEP 3: Login to Amazon ECR ===
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region ap-southeast-1 \
             | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
 
-      # Build & push backend
+      # === STEP 4: Build and Push Backend Docker Image ===
       - name: Build and Push Backend Docker Image
         run: |
           docker build -t portfolio-backend ./backend
           docker tag portfolio-backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancebackend:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancebackend:latest
 
-      # Build & push frontend
+      # === STEP 5: Build and Push Frontend Docker Image ===
       - name: Build and Push Frontend Docker Image
         run: |
           docker build -t portfolio-frontend ./frontend
           docker tag portfolio-frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancefrontend:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancefrontend:latest
 
-      # SSH Deploy
-      - name: SSH Deploy
+      # === STEP 6: SSH into EC2 and Run Deploy Script ===
+      - name: SSH Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -60,29 +66,30 @@ jobs:
             chmod +x ~/deploy.sh
             ~/deploy.sh
 
-      # Post-deployment health checks
+      # === STEP 7: Verify Frontend is Live ===
       - name: Verify Frontend is live
         run: |
           for i in {1..15}; do
             if curl -s --fail https://limjiajing.com > /dev/null; then
-              echo "Frontend is live! ✅"
+              echo "✅ Frontend is live!"
               exit 0
             fi
             echo "Waiting for frontend..."
             sleep 5
           done
-          echo "Frontend failed to come online! ❌"
+          echo "❌ Frontend failed to come online!"
           exit 1
-          
+
+      # === STEP 8: Verify Backend is Live ===
       - name: Verify Backend is live
         run: |
           for i in {1..15}; do
             if curl -s --fail https://limjiajing.com/health > /dev/null; then
-              echo "Backend is live! ✅"
+              echo "✅ Backend is live!"
               exit 0
             fi
             echo "Waiting for backend..."
             sleep 5
           done
-          echo "Backend failed to come online! ❌"
+          echo "❌ Backend failed to come online!"
           exit 1
