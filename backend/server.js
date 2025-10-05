@@ -5,7 +5,7 @@ console.log("NODE_ENV =", process.env.NODE_ENV);
 // ✅ Only patch axios mock; still start Express normally
 if (process.env.NODE_ENV === "test") {
   console.log("Running in test mode: axios is mocked");
-  require('./axiosMock');
+  require('./axiosMock.js');
 }
 
 const express = require('express');
