@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: preproduction
-          token: ${{ secrets.PAT_TOKEN }}  # Personal Access Token (Classic) with repo permissions
+          token: ${{ secrets.GH_PAT}}  # Personal Access Token (Classic) with repo permissions
 
       - name: Merge preproduction into main
         run: |
