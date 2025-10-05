@@ -60,3 +60,12 @@ jobs:
       - name: Shutdown services
         if: always()
         run: docker compose -f docker-compose.preprod.yml down
+      
+
+      # 8. Trigger deploy workflow if preprod passes
+      - name: Trigger Deploy Workflow
+        if: ${{ success() }}   # Only run if all previous steps succeeded
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: "deploy.yml"  # deploy workflow file
+          ref: main               # deploy runs on main branch
