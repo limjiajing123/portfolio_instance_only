@@ -15,8 +15,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    
     steps:
+      # === Step 0: Skip if this run was triggered by the previous merge commit ===
+      - name: Skip duplicate CI runs
+        if: ${{ github.actor == 'github-actions[bot]' }}
+        run: |
+          echo "Skipping duplicate run triggered by GitHub Actions bot."
+          exit 0
+          
       # === Step 1: Checkout the main branch with full history ===
       - name: Checkout main branch
         uses: actions/checkout@v3
