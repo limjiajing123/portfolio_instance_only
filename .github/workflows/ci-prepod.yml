@@ -70,3 +70,20 @@ jobs:
           workflow: "deploy.yml"  # deploy workflow file
           ref: main               # deploy runs on main branch
           token: ${{ secrets.GH_PAT }}
+
+      - name: Notify Telegram (Success)
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="✅ Preproduction CI Passed! Repo: ${{ github.repository }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
+
+      - name: Notify Telegram (Failure)
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="❌ Preproduction CI Failed! Repo: ${{ github.repository }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
+
+        
+        
