@@ -119,7 +119,7 @@ jobs:
         
       # === Step 12: Telegram Notification - Success ===
       - name: Notify Telegram - Success
-        if: ${{ success() }}
+        if: success()
         run: |
           MESSAGE="✅ *Deployment Successful!*%0ARepository: ${{ github.repository }}%0ABranch: main%0ATriggered by: ${{ github.actor }}%0A🌐 [View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
@@ -129,7 +129,7 @@ jobs:
 
       # === Step 13: Telegram Notification - Failure ===
       - name: Notify Telegram - Failure
-        if: ${{ failure() }}
+        if: failure()
         run: |
           MESSAGE="❌ *Deployment Failed!*%0ARepository: ${{ github.repository }}%0ABranch: main%0ATriggered by: ${{ github.actor }}%0A⚠️ [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
