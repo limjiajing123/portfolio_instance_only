@@ -71,19 +71,44 @@ jobs:
           ref: main               # deploy runs on main branch
           token: ${{ secrets.GH_PAT }}
 
-      - name: Notify Telegram (Success)
-        if: success()
+       # === Step: Notify Discord with Embed ===
+      - name: Notify Discord
+        if: always()
         run: |
-          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d text="✅ Preproduction CI Passed! Repo: ${{ github.repository }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
+          if [ "${{ job.status }}" = "success" ]; then
+            COLOR=3066993  # green
+            STATUS="✅ Deployment succeeded!"
+          else
+            COLOR=15158332 # red
+            STATUS="❌ Deployment failed!"
+          fi
 
-      - name: Notify Telegram (Failure)
-        if: failure()
-        run: |
-          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d text="❌ Preproduction CI Failed! Repo: ${{ github.repository }} | Branch: ${{ github.ref_name }} | Commit: ${{ github.sha }}"
+          PAYLOAD=$(jq -n \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg run_url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --argjson color "$COLOR" \
+            '{
+              "embeds": [{
+                "title": $status,
+                "color": $color,
+                "fields": [
+                  {"name": "Repository", "value": $repo, "inline": true},
+                  {"name": "Branch", "value": $branch, "inline": true},
+                  {"name": "Triggered by", "value": $actor, "inline": true},
+                  {"name": "Workflow Run", "value": $run_url, "inline": false}
+                ],
+                "footer": {"text": "GitHub Actions • Deploy Workflow"}
+              }]
+            }'
+          )
 
-        
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+
         

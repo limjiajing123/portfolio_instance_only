@@ -223,7 +223,7 @@ export const skills = [
       {
         name: "Wireshark",
         image:
-          "https://skillicons.dev/icons?i=wireshark",
+          "https://upload.wikimedia.org/wikipedia/commons/c/c6/Wireshark_icon_new.png",
       },
       {
         name: "Figma",
@@ -238,7 +238,7 @@ export const skills = [
       {
         name: "Jira",
         image:
-          "https://storage.googleapis.com/bucket-images-portfolio-web/allow_public_folder/jira_logo.png",
+          "https://camo.githubusercontent.com/b97eaa6d1a4edc127545803f08dc9315e7e6132960e6fadc28f7d024161a97ee/68747470733a2f2f61746c61737369616e2e67616c6c65727963646e2e76736173736574732e696f2f657874656e73696f6e732f61746c61737369616e2f61746c6173636f64652f312e342e302f313535383132333132313437352f4d6963726f736f66742e56697375616c53747564696f2e53657276696365732e49636f6e732e44656661756c74",
       },
       {
         name: "Confluence",
@@ -396,7 +396,7 @@ export const projects = [
     title: "PortFolio Website",
     date: "Present",
     description:
-      `Yes you are looking at it. This is my portfolio website. 
+      `Yes this page you are looking at is my portfolio website. Nothing too fancy just fundamental training for my software development skills.
       I have designed and developed this website to showcase my projects, experiences, and skills.
       Developed and deployed a React-based portfolio website with an AI chatbot using Express.js for the backend, hosted on AWS ECS.
       Designed a frontend-backend architecture, where the backend handles API calls to OpenRouter for chatbot(DeepSeek) responses.
