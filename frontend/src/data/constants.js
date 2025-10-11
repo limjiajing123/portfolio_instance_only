@@ -396,7 +396,7 @@ export const projects = [
     title: "PortFolio Website",
     date: "Present",
     description:
-      `Yes you are looking at it. This is my portfolio website. 
+      `Yes this page you are looking at is my portfolio website. Nothing too fancy just fundamental training for my software development skills.
       I have designed and developed this website to showcase my projects, experiences, and skills.
       Developed and deployed a React-based portfolio website with an AI chatbot using Express.js for the backend, hosted on AWS ECS.
       Designed a frontend-backend architecture, where the backend handles API calls to OpenRouter for chatbot(DeepSeek) responses.
