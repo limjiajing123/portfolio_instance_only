@@ -1,6 +1,6 @@
-import os
+# import os
 import pytest
-import requests
+# import requests
 
 @pytest.mark.skip(reason="Frontend not part of preprod tests currently")
 def test_frontend_homepage():
