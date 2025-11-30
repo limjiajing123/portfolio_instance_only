@@ -1,0 +1,74 @@
+name: OpenRouter Chatbot Monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"  # every 30 minutes (UTC)
+  workflow_dispatch:        # allow manual trigger from Actions tab
+
+jobs:
+  monitor-openrouter:
+    runs-on: ubuntu-latest
+
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    steps:
+      - name: Call OpenRouter health check
+        id: openrouter
+        run: |
+          # Minimal health-check request to OpenRouter
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST https://openrouter.ai/api/v1/chat/completions \
+            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "deepseek/deepseek-chat-v3.1:free",
+              "messages": [
+                { "role": "user", "content": "ping" }
+              ],
+              "max_tokens": 10
+            }')
+
+          HTTP_BODY=$(echo "$RESPONSE" | head -n -1)
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+          echo "HTTP_STATUS=$HTTP_STATUS" >> $GITHUB_OUTPUT
+          echo "HTTP_BODY=$HTTP_BODY" >> $GITHUB_OUTPUT
+
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Unexpected status: $HTTP_STATUS"
+            echo "Response body: $HTTP_BODY"
+            exit 1
+          fi
+
+          # Optional: sanity check that choices[0].message.content exists
+          if ! echo "$HTTP_BODY" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
+            echo "OpenRouter response missing choices[0].message.content"
+            exit 1
+          fi
+
+      - name: Notify Discord on failure
+        if: failure()
+        run: |
+          STATUS="❌ OpenRouter health check failed"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Simple Discord message (no secrets logged)
+          PAYLOAD=$(jq -n \
+            --arg status "$STATUS" \
+            --arg run_url "$RUN_URL" \
+            '{
+              "content": $status,
+              "embeds": [{
+                "title": $status,
+                "description": "Check GitHub Actions log for details.",
+                "fields": [
+                  {"name": "Workflow Run", "value": $run_url}
+                ]
+              }]
+            }')
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK_URL"
