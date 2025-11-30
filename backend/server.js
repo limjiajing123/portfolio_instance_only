@@ -1,4 +1,6 @@
 require('dotenv').config();
+const sendDiscordAlert = require("./discordAlertApiFail.js");
+
 
 console.log("NODE_ENV =", process.env.NODE_ENV);
 
@@ -93,6 +95,9 @@ app.post('/api/chat', async (req, res) => {
     }
   } catch (error) {
     console.error('Error interacting with OpenRouter API:', error);
+    sendDiscordAlert(error, message).catch((e) =>
+      console.error("Failed to send Discord alert:", e.message));
+    
     res.status(500).json({ error: 'Something went wrong' });
   }
 });
