@@ -1,3 +1,5 @@
+import os
+import pytest
 import requests
 
 @pytest.mark.skip(reason="Frontend not part of preprod tests currently")
