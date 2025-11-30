@@ -221,6 +221,7 @@ const Chatbot = () => {
     setChatHistory((prev) => [...prev, { sender: 'user', message: messageToSend }]);
     setIsBotTyping(true);
 
+    // 'https://limjiajing.com/api/chat'>
     try {
       const response = await axios.post('https://limjiajing.com/api/chat', { message: messageToSend });
       setChatHistory((prev) => [
