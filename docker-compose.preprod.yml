@@ -13,8 +13,10 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - NODE_ENV=production             # ✅ set production mode
+      - NODE_ENV=test             # ✅ set production mode
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - REDIS_HOST=redis        # 🔹 important for in-network Redis
+      - REDIS_PORT=6379
     depends_on:
       - redis
     networks:
