@@ -1,4 +1,5 @@
 require('dotenv').config();
+const sendDiscordAlert = require("./discordAlertApiFail.js");
 
 console.log("NODE_ENV =", process.env.NODE_ENV);
 
@@ -18,7 +19,7 @@ const app = express();
 const port = 5000;
 
 const corsOptions = {
-  origin: ['https://www.limjiajing.com'],  // Frontend domain
+  origin: ['https://www.limjiajing.com',],  // Frontend domain
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,  // Allow credentials (cookies) to be sent
@@ -58,7 +59,7 @@ app.post('/api/chat', async (req, res) => {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'deepseek/deepseek-chat-v3.1:free', // Change to Deepseek R1
+        model: 'x-ai/grok-4.1-fast:free', // Change to Deepseek R1
         messages: [
           {
             role: 'system',
@@ -93,6 +94,9 @@ app.post('/api/chat', async (req, res) => {
     }
   } catch (error) {
     console.error('Error interacting with OpenRouter API:', error);
+    sendDiscordAlert(error, message).catch((e) =>
+      console.error("Failed to send Discord alert:", e.message));
+
     res.status(500).json({ error: 'Something went wrong' });
   }
 });
@@ -101,6 +105,20 @@ app.post('/api/chat', async (req, res) => {
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+// ✅ Debug Discord test endpoint
+// app.get('/debug/discord-test', async (req, res) => {
+//   try {
+//     await sendDiscordAlert(
+//       new Error("Manual Discord test error"),
+//       "This is a manual test from /debug/discord-test"
+//     );
+//     return res.json({ ok: true, message: "Discord alert sent (check your channel)" });
+//   } catch (e) {
+//     console.error("Failed to send test Discord alert:", e);
+//     return res.status(500).json({ error: "Failed to send Discord alert" });
+//   }
+// });
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
