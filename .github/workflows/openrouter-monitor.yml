@@ -17,7 +17,6 @@ jobs:
       - name: Call OpenRouter health check
         id: openrouter
         run: |
-          # Minimal health-check request to OpenRouter
           RESPONSE=$(curl -s -w "\n%{http_code}" -X POST https://openrouter.ai/api/v1/chat/completions \
             -H "Authorization: Bearer $OPENROUTER_API_KEY" \
             -H "Content-Type: application/json" \
@@ -32,8 +31,8 @@ jobs:
           HTTP_BODY=$(echo "$RESPONSE" | head -n -1)
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
 
-          echo "HTTP_STATUS=$HTTP_STATUS" >> $GITHUB_OUTPUT
-          echo "HTTP_BODY=$HTTP_BODY" >> $GITHUB_OUTPUT
+          echo "Status from OpenRouter: $HTTP_STATUS"
+          echo "Body from OpenRouter: $HTTP_BODY"
 
           if [ "$HTTP_STATUS" -ne 200 ]; then
             echo "Unexpected status: $HTTP_STATUS"
@@ -41,11 +40,11 @@ jobs:
             exit 1
           fi
 
-          # Optional: sanity check that choices[0].message.content exists
           if ! echo "$HTTP_BODY" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
             echo "OpenRouter response missing choices[0].message.content"
             exit 1
           fi
+
 
       - name: Notify Discord on failure
         if: failure()
