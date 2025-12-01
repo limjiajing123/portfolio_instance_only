@@ -13,7 +13,7 @@ Frameworks & Libraries: ReactJS, .NET, SpringBoot, Pandas
 Cloud & Devops Tools: AWS, Docker, Terraform, Jenkins
 Tools & Platforms: Linux, Windows, ROSI&II, Git, GitHub, Jira, Confluence, Postman, Putty, Figma, Tosca,
 Postman, Microsoft Office
-CAD & Design Tools: SolidWorks, Figma
+CAD & Design Tools: SolidWorks, Figma, Canva
 Database: MySQL, Oracle SQL
 Database Management: MySQL, Oracle SQL
 Testing Tools: Tosca, Zephyr for Jira, Perfecto, Pytest, Selenium, Playwright
