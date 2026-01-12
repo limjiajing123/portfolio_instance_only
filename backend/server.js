@@ -59,7 +59,7 @@ app.post('/api/chat', async (req, res) => {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'x-ai/grok-4.1-fast:free', // Change to Deepseek R1
+        model: 'google/gemma-3-27b-it:free', // Change to Gemma-3-27b-it
         messages: [
           {
             role: 'system',
