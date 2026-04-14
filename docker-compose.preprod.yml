@@ -7,20 +7,47 @@ services:
     networks:
       - app-network
 
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm_config.example.yaml:/app/config.yaml
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s    # give LiteLLM time to boot before first check
+    networks:
+      - app-network
+    restart: unless-stopped
+
   backend:
     build: ./backend
     container_name: backend
     ports:
       - "5000:5000"
-    environment:
-      - NODE_ENV=production             # ✅ set production mode
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - REDIS_HOST=redis        # 🔹 important for in-network Redis
-      - REDIS_PORT=6379
     depends_on:
-      - redis
+      litellm:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     networks:
       - app-network
+    restart: unless-stopped
 
   frontend:
     build: ./frontend

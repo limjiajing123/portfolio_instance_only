@@ -11,6 +11,8 @@ jobs:
 
     env:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}  # safe for staging
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}          # safe for staging
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} # for notifications
 
     steps:
       # 1. Checkout repository
@@ -33,8 +35,9 @@ jobs:
       - name: Start services with docker compose
         run: |
           NODE_ENV=test docker compose -f docker-compose.preprod.yml up -d --build
-          sleep 15
+          sleep 30
           docker ps -a
+          docker logs backend
 
       # 5. Backend health check
       - name: Backend health check

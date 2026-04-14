@@ -1,69 +1,71 @@
-name: OpenRouter Chatbot Monitor
+name: Production Chatbot Monitor
 
 on:
   schedule:
-    - cron: "0 */6 * * *"  # every 6 hours (UTC)
-  workflow_dispatch:        # allow manual trigger from Actions tab
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
 
 jobs:
-  monitor-openrouter:
+  monitor-chatbot:
     runs-on: ubuntu-latest
 
     env:
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     steps:
-      - name: Call OpenRouter health check
-        id: openrouter
+      - name: Ping production chatbot
+        id: chatbot
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST https://openrouter.ai/api/v1/chat/completions \
-            -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST https://limjiajing.com/api/chat \
             -H "Content-Type: application/json" \
-            -d '{
-              "model": "x-ai/grok-4.1-fast:free",
-              "messages": [
-                { "role": "user", "content": "ping" }
-              ],
-              "max_tokens": 10
-            }')
+            -d '{"message": "ping"}')
 
           HTTP_BODY=$(echo "$RESPONSE" | head -n -1)
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
 
-          echo "Status from OpenRouter: $HTTP_STATUS"
-          echo "Body from OpenRouter: $HTTP_BODY"
+          echo "Status: $HTTP_STATUS"
+          echo "Body: $HTTP_BODY"
 
           if [ "$HTTP_STATUS" -ne 200 ]; then
-            echo "Unexpected status: $HTTP_STATUS"
-            echo "Response body: $HTTP_BODY"
+            echo "Chatbot returned unexpected status: $HTTP_STATUS"
             exit 1
           fi
 
-          if ! echo "$HTTP_BODY" | jq -e '.choices[0].message.content' > /dev/null 2>&1; then
-            echo "OpenRouter response missing choices[0].message.content"
+          if ! echo "$HTTP_BODY" | jq -e '.botResponse' > /dev/null 2>&1; then
+            echo "Response missing botResponse key"
             exit 1
           fi
 
+          echo "Chatbot is healthy ✅"
+
+      - name: Check backend health endpoint
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://limjiajing.com/health)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Backend health check failed: $STATUS"
+            exit 1
+          fi
+          echo "Backend healthy ✅"
 
       - name: Notify Discord on failure
         if: failure()
         run: |
-          STATUS="❌ OpenRouter health check failed"
+          STATUS="❌ Production chatbot monitor failed"
           RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-          # Simple Discord message (no secrets logged)
           PAYLOAD=$(jq -n \
             --arg status "$STATUS" \
             --arg run_url "$RUN_URL" \
             '{
-              "content": $status,
               "embeds": [{
                 "title": $status,
-                "description": "Check GitHub Actions log for details.",
+                "color": 15158332,
+                "description": "Your portfolio chatbot may be down. Check GitHub Actions for details.",
                 "fields": [
+                  {"name": "Site", "value": "https://limjiajing.com"},
                   {"name": "Workflow Run", "value": $run_url}
-                ]
+                ],
+                "footer": {"text": "Portfolio Monitor • every 6 hours"}
               }]
             }')
 
