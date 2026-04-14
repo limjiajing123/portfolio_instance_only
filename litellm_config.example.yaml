@@ -1,0 +1,17 @@
+model_list:
+  - model_name: portfolio-default
+    litellm_params:
+      model: gemini/gemini-2.5-flash-lite-preview-06-17
+      api_key: os.environ/GEMINI_API_KEY
+
+  - model_name: portfolio-fallback
+    litellm_params:
+      model: openrouter/google/gemma-3-27b-it:free
+      api_key: os.environ/OPENROUTER_API_KEY
+
+router_settings:
+  fallbacks: [{"portfolio-default": ["portfolio-fallback"]}]
+  num_retries: 2
+
+litellm_settings:
+  drop_params: true
