@@ -19,7 +19,7 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/chat/completions -X POST -H 'Content-Type: application/json' -d '{\"model\":\"portfolio-default\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}]}' | grep -qE '200|503|429|401'"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health')"]
       interval: 15s
       timeout: 10s
       retries: 5
