@@ -32,7 +32,8 @@ app.use(express.json());
 // Debugging logs
 console.log("Server starting...");
 console.log("NODE_ENV:", process.env.NODE_ENV || "not set");
-console.log("OpenRouter API Key:", process.env.OPENROUTER_API_KEY ? "Loaded" : "Not Found");
+console.log("GEMINI API Key:", process.env.GEMINI_API_KEY ? "Loaded" : "Not Found");
+console.log("OpenRouter API Key (fallback):", process.env.OPENROUTER_API_KEY ? "Loaded" : "Not Found");
 
 // Chatbot endpoint that handles user messages
 app.post('/api/chat', async (req, res) => {
@@ -42,9 +43,9 @@ app.post('/api/chat', async (req, res) => {
     return res.status(400).json({ error: 'Message is required' });
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    console.error("Missing OPENROUTER_API_KEY!");
+    console.error("Missing API key!");
     return res.status(500).json({ error: "Server misconfiguration: Missing API key" });
   }
 
@@ -57,9 +58,9 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'http://litellm:4000/chat/completions',
       {
-        model: 'google/gemma-3-27b-it:free', // Change to Gemma-3-27b-it
+        model: 'portfolio-default', // Change to Gemma-3-27b-it
         messages: [
           {
             role: 'system',
@@ -73,7 +74,7 @@ app.post('/api/chat', async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer dummy`,
           'Content-Type': 'application/json',
           'HTTP-Referer': process.env.YOUR_SITE_URL || '',
           'X-Title': process.env.YOUR_SITE_NAME || '',
@@ -93,7 +94,7 @@ app.post('/api/chat', async (req, res) => {
       return res.status(500).json({ error: 'No valid response from AI' });
     }
   } catch (error) {
-    console.error('Error interacting with OpenRouter API:', error);
+    console.error('Error interacting with LiteLLM:', error);
     sendDiscordAlert(error, message).catch((e) =>
       console.error("Failed to send Discord alert:", e.message));
 
