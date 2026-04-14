@@ -11,6 +11,8 @@ jobs:
 
     env:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}  # safe for staging
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}          # safe for staging
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} # for notifications
 
     steps:
       # 1. Checkout repository
