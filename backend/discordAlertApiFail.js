@@ -34,7 +34,7 @@ async function sendDiscordAlert(error, userMessage) {
     });
 
     const content = [
-      "⚠️ **OpenRouter API Error on Portfolio Chatbot**",
+      "⚠️ **API Error on Portfolio Chatbot**",
       `**Time (SGT):** ${sgTime}`,
       `**User message:** ${userMessage || "(not provided)"}`,
       `**Error message:** ${errMsg}`,
