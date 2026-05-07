@@ -78,13 +78,14 @@ jobs:
           docker tag portfolio-frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancefrontend:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancefrontend:latest
       
+      # === Step 9: Build & push MCP Docker Image ===
       - name: Build and Push MCP Docker Image
         run: |
           docker build -t portfolio-mcp ./mcp-server
           docker tag portfolio-mcp:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfoliomcp:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfoliomcp:latest
 
-      # === Step 9: SSH into EC2 & deploy ===
+      # === Step 10: SSH into EC2 & deploy ===
       - name: SSH Deploy
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -95,7 +96,7 @@ jobs:
             chmod +x ~/deploy.sh
             ~/deploy.sh
 
-      # === Step 10: Verify frontend health ===
+      # === Step 11: Verify frontend health ===
       - name: Verify Frontend is live
         run: |
           for i in {1..15}; do
@@ -109,7 +110,7 @@ jobs:
           echo "Frontend failed to come online!"
           exit 1
 
-      # === Step 11: Verify backend health ===
+      # === Step 12: Verify backend health ===
       - name: Verify Backend is live
         run: |
           for i in {1..15}; do
@@ -123,7 +124,7 @@ jobs:
           echo "Backend failed to come online!"
           exit 1
         
-      # === Step: Notify Discord with Embed ===
+      # === Step 13: Notify Discord with Embed ===
       - name: Notify Discord
         if: always()
         run: |
