@@ -77,6 +77,12 @@ jobs:
           docker build -t portfolio-frontend ./frontend
           docker tag portfolio-frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancefrontend:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/instancefrontend:latest
+      
+      - name: Build and Push MCP Docker Image
+        run: |
+          docker build -t portfolio-mcp ./mcp-server
+          docker tag portfolio-mcp:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfoliomcp:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com/portfoliomcp:latest
 
       # === Step 9: SSH into EC2 & deploy ===
       - name: SSH Deploy
