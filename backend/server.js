@@ -120,15 +120,19 @@ app.post('/api/chat', async (req, res) => {
 
       // Call the tool via MCP server
       const toolResult = await callMCPTool(toolName, toolArgs);
+      console.log(`Tool result type: ${typeof toolResult}`);           // ← add here
+      console.log(`Tool result preview: ${String(toolResult).substring(0, 100)}`); // ← add here
       console.log(`MCP tool result received for: ${toolName}`);
+
 
       // Second LLM call — with tool result
       messages.push(firstChoice.message);
       messages.push({
         role: 'tool',
         tool_call_id: toolCall.id,
-        content: toolResult
+        content: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult)
       });
+      
 
       const secondResponse = await axios.post(
         'http://litellm:4000/chat/completions',
