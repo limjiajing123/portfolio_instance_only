@@ -106,7 +106,7 @@ app.post('/api/chat', async (req, res) => {
     // First LLM call — with tools
     const firstResponse = await axios.post(
       'http://litellm:4000/chat/completions',
-      { model: 'portfolio-default', messages, tools },
+      JSON.stringify({ model: 'portfolio-default', messages, tools }),
       { headers: { Authorization: 'Bearer dummy', 'Content-Type': 'application/json' } }
     );
 
@@ -138,7 +138,7 @@ app.post('/api/chat', async (req, res) => {
 
       const secondResponse = await axios.post(
         'http://litellm:4000/chat/completions',
-        { model: 'portfolio-default', messages },
+        JSON.stringify({ model: 'portfolio-default', messages }),
         { headers: { Authorization: 'Bearer dummy', 'Content-Type': 'application/json' } }
       );
 
