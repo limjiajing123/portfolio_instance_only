@@ -12,7 +12,6 @@ if (process.env.NODE_ENV === "test") {
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const portfolioKnowledge = require('./portfolioKnowledge');
 const redisClient = require('./redis'); // Import Redis client
 const { Client } = require('@modelcontextprotocol/sdk/client/index.js');
 const { SSEClientTransport } = require('@modelcontextprotocol/sdk/client/sse.js');
@@ -55,7 +54,9 @@ async function getMCPTools() {
     function: {
       name: tool.name,
       description: tool.description,
-      parameters: tool.inputSchema || { type: 'object', properties: {} }
+      parameters: tool.inputSchema
+        ? JSON.parse(JSON.stringify(tool.inputSchema))  // deep clone to remove circular refs
+        : { type: 'object', properties: {} }
     }
   }));
 }
@@ -89,6 +90,7 @@ app.post('/api/chat', async (req, res) => {
     // Get tools from MCP server
     const tools = await getMCPTools();
     console.log(`Loaded ${tools.length} MCP tools`);
+    console.log('Tools sample:', JSON.stringify(tools[0], null, 2));
 
     const messages = [
       {
