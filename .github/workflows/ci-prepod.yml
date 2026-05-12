@@ -3,41 +3,65 @@ name: Preproduction CI Smoke Tests
 on:
   push:
     branches:
-      - preproduction   # only run workflow on preproduction branch
+      - preproduction
 
 jobs:
   preprod-tests:
     runs-on: ubuntu-latest
 
     env:
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}  # safe for staging
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}          # safe for staging
-      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} # for notifications
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     steps:
       # 1. Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Set up Python (for pytest tests)
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # 3. Install pytest dependencies
+      # 3. Install test dependencies
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest requests requests-mock
+          pip install pytest requests requests-mock mcp==1.6.0
 
       # 4. Build & start services
       - name: Start services with docker compose
         run: |
           NODE_ENV=test docker compose -f docker-compose.preprod.yml up -d --build
-          sleep 30
+
+          # Wait for LiteLLM
+          echo "Waiting for LiteLLM..."
+          for i in {1..20}; do
+            if curl -s http://localhost:4000/health > /dev/null 2>&1; then
+              echo "LiteLLM is up ✅"
+              break
+            fi
+            echo "Attempt $i/20 — waiting..."
+            sleep 5
+          done
+
+          # Wait for MCP server
+          echo "Waiting for MCP server..."
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/sse > /dev/null 2>&1; then
+              echo "MCP server is up ✅"
+              break
+            fi
+            sleep 3
+          done
+
           docker ps -a
+          echo "=== BACKEND LOGS ==="
           docker logs backend
+          echo "=== MCP LOGS ==="
+          docker logs mcp-server
 
       # 5. Backend health check
       - name: Backend health check
@@ -53,36 +77,45 @@ jobs:
           echo "Backend health check failed ❌"
           exit 1
 
-      # 6. Run smoke tests
-      - name: Run smoke tests
-        run:  |
+      # 6. Run unit tests (mocked, fast, no LLM)
+      - name: Run unit tests
+        run: |
           export NODE_ENV=test
-          pytest -v tests/
-          
-      # 7. Tear down
+          pytest -v tests/test_backend.py tests/test_frontend.py
+
+      # 7. Run MCP integration tests (real MCP server, no LLM)
+      - name: Run MCP integration tests
+        run: |
+          pytest -v tests/test_mcp.py
+
+      # 8. Run smoke tests (health checks)
+      - name: Run smoke tests
+        run: |
+          pytest -v tests/smoke_test.py
+
+      # 9. Tear down
       - name: Shutdown services
         if: always()
         run: docker compose -f docker-compose.preprod.yml down
-      
 
-      # 8. Trigger deploy workflow if preprod passes
+      # 10. Trigger deploy workflow if preprod passes
       - name: Trigger Deploy Workflow
-        if: ${{ success() }}   # Only run if all previous steps succeeded
+        if: ${{ success() }}
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: "deploy.yml"  # deploy workflow file
-          ref: main               # deploy runs on main branch
+          workflow: "deploy.yml"
+          ref: main
           token: ${{ secrets.GH_PAT }}
 
-       # === Step: Notify Discord with Embed ===
+      # 11. Notify Discord
       - name: Notify Discord
         if: always()
         run: |
           if [ "${{ job.status }}" = "success" ]; then
-            COLOR=3066993  # green
+            COLOR=3066993
             STATUS="✅ Deployment succeeded!"
           else
-            COLOR=15158332 # red
+            COLOR=15158332
             STATUS="❌ Deployment failed!"
           fi
 
@@ -113,5 +146,3 @@ jobs:
                -X POST \
                -d "$PAYLOAD" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
-
-        
