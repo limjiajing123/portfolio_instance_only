@@ -128,13 +128,27 @@ app.post('/api/chat', async (req, res) => {
 
 
       // Second LLM call — with tool result
-      messages.push(firstChoice.message);
+      messages.push({
+        role: 'assistant',
+        content: firstChoice.message.content || null,
+        tool_calls: firstChoice.message.tool_calls.map(tc => ({
+          id: tc.id,
+          type: tc.type,
+          function: {
+            name: tc.function.name,
+            arguments: tc.function.arguments
+          }
+        }))
+      });
+
+      
       messages.push({
         role: 'tool',
         tool_call_id: toolCall.id,
         content: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult)
       });
-      
+
+      console.log('Second call messages:', JSON.stringify(messages, null, 2));
 
       const secondResponse = await axios.post(
         'http://litellm:4000/chat/completions',
