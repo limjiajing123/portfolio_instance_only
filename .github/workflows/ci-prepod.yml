@@ -47,13 +47,25 @@ jobs:
             sleep 5
           done
 
-          # Wait for MCP server
+          # Wait for MCP server (--max-time 2 prevents SSE from hanging forever)
           echo "Waiting for MCP server..."
-          for i in {1..10}; do
-            if curl -s http://localhost:8000/sse > /dev/null 2>&1; then
+          for i in {1..15}; do
+            if curl -s --max-time 2 http://localhost:8000/sse > /dev/null 2>&1; then
               echo "MCP server is up ✅"
               break
             fi
+            echo "Attempt $i/15 — waiting..."
+            sleep 3
+          done
+
+          # Wait for backend
+          echo "Waiting for backend..."
+          for i in {1..10}; do
+            if curl -s http://localhost:5000/health | grep -q "ok"; then
+              echo "Backend healthy ✅"
+              break
+            fi
+            echo "Waiting for backend..."
             sleep 3
           done
 
@@ -63,42 +75,28 @@ jobs:
           echo "=== MCP LOGS ==="
           docker logs mcp-server
 
-      # 5. Backend health check
-      - name: Backend health check
-        run: |
-          for i in {1..10}; do
-            if curl -s http://localhost:5000/health | grep -q "ok"; then
-              echo "Backend healthy ✅"
-              exit 0
-            fi
-            echo "Waiting for backend..."
-            sleep 3
-          done
-          echo "Backend health check failed ❌"
-          exit 1
-
-      # 6. Run unit tests (mocked, fast, no LLM)
+      # 5. Run unit tests (mocked, fast, no LLM)
       - name: Run unit tests
         run: |
           export NODE_ENV=test
           pytest -v tests/test_backend.py tests/test_frontend.py
 
-      # 7. Run MCP integration tests (real MCP server, no LLM)
+      # 6. Run MCP integration tests (real MCP server, no LLM)
       - name: Run MCP integration tests
         run: |
           pytest -v tests/test_mcp.py
 
-      # 8. Run smoke tests (health checks)
+      # 7. Run smoke tests (health checks only)
       - name: Run smoke tests
         run: |
           pytest -v tests/smoke_test.py
 
-      # 9. Tear down
+      # 8. Tear down
       - name: Shutdown services
         if: always()
         run: docker compose -f docker-compose.preprod.yml down
 
-      # 10. Trigger deploy workflow if preprod passes
+      # 9. Trigger deploy workflow if preprod passes
       - name: Trigger Deploy Workflow
         if: ${{ success() }}
         uses: benc-uk/workflow-dispatch@v1
@@ -107,7 +105,7 @@ jobs:
           ref: main
           token: ${{ secrets.GH_PAT }}
 
-      # 11. Notify Discord
+      # 10. Notify Discord
       - name: Notify Discord
         if: always()
         run: |
