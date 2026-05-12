@@ -77,7 +77,7 @@ async function litellmChat(body) {
 
 async function getMCPTools() {
   const transport = new SSEClientTransport(
-    new URL('http://mcp-server:8000/sse')
+    'http://mcp-server:8000/sse'
   );
   const client = new Client({ name: 'portfolio-backend', version: '1.0.0' });
   await client.connect(transport);
@@ -99,7 +99,7 @@ async function getMCPTools() {
 
 async function callMCPTool(toolName, args) {
   const transport = new SSEClientTransport(
-    new URL('http://mcp-server:8000/sse')
+    'http://mcp-server:8000/sse'
   );
   const client = new Client({ name: 'portfolio-backend', version: '1.0.0' });
   await client.connect(transport);
