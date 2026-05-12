@@ -28,7 +28,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));  // Apply CORS options
-// app.use(cors());
 app.use(express.json());
 
 // Debugging logs
@@ -36,6 +35,23 @@ console.log("Server starting...");
 console.log("NODE_ENV:", process.env.NODE_ENV || "not set");
 console.log("GEMINI API Key:", process.env.GEMINI_API_KEY ? "Loaded" : "Not Found");
 console.log("OpenRouter API Key (fallback):", process.env.OPENROUTER_API_KEY ? "Loaded" : "Not Found");
+
+// ── LiteLLM helper using native fetch (Node v18+) ────────────────────────────
+async function litellmChat(body) {
+  const response = await fetch('http://litellm:4000/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer dummy'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`LiteLLM ${response.status}: ${err}`);
+  }
+  return response.json();
+}
 
 // ── MCP Client helpers ───────────────────────────────────────────────────────
 
@@ -90,32 +106,21 @@ app.post('/api/chat', async (req, res) => {
     // Get tools from MCP server
     const tools = await getMCPTools();
     console.log(`Loaded ${tools.length} MCP tools`);
-    console.log('Tools sample:', JSON.stringify(tools[0], null, 2));
 
     const messages = [
       {
         role: 'system',
         content: `You are an AI assistant for Jia Jing's portfolio website.
-                  Use the available tools to fetch information, then summarize the results in a friendly, concise way.
-                  Never return raw tool calls or code blocks in your response.
-                  Always provide a human-readable answer based on the tool results.`
+Use the available tools to fetch information, then summarize the results in a friendly, concise way.
+Never return raw tool calls or code blocks in your response.
+Always provide a human-readable answer based on the tool results.`
       },
       { role: 'user', content: message }
     ];
 
     // First LLM call — with tools
-    const firstResponse = await axios({
-      method: 'post',
-      url: 'http://litellm:4000/chat/completions',
-      data: { model: 'portfolio-default', messages, tools },
-      headers: {
-        Authorization: 'Bearer dummy',
-        'Content-Type': 'application/json'
-      },
-      transformRequest: [(data) => JSON.stringify(data)]
-    });
-
-    const firstChoice = firstResponse.data.choices[0];
+    const firstData = await litellmChat({ model: 'portfolio-default', messages, tools });
+    const firstChoice = firstData.choices[0];
 
     // If LLM wants to call a tool
     if (firstChoice.finish_reason === 'tool_calls' && firstChoice.message.tool_calls) {
@@ -127,10 +132,9 @@ app.post('/api/chat', async (req, res) => {
 
       // Call the tool via MCP server
       const toolResult = await callMCPTool(toolName, toolArgs);
-      console.log(`Tool result type: ${typeof toolResult}`);           // ← add here
-      console.log(`Tool result preview: ${String(toolResult).substring(0, 100)}`); // ← add here
+      console.log(`Tool result type: ${typeof toolResult}`);
+      console.log(`Tool result preview: ${String(toolResult).substring(0, 100)}`);
       console.log(`MCP tool result received for: ${toolName}`);
-
 
       // Second LLM call — with tool result
       messages.push({
@@ -146,27 +150,14 @@ app.post('/api/chat', async (req, res) => {
         }))
       });
 
-      
       messages.push({
         role: 'tool',
         tool_call_id: toolCall.id,
         content: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult)
       });
 
-      console.log('Second call messages:', JSON.stringify(messages, null, 2));
-
-      const secondResponse = await axios({
-        method: 'post',
-        url: 'http://litellm:4000/chat/completions',
-        data: { model: 'portfolio-default', messages },
-        headers: {
-          Authorization: 'Bearer dummy',
-          'Content-Type': 'application/json'
-        },
-        transformRequest: [(data) => JSON.stringify(data)]
-      });
-
-      const botReply = secondResponse.data.choices[0].message.content;
+      const secondData = await litellmChat({ model: 'portfolio-default', messages });
+      const botReply = secondData.choices[0].message.content;
       await redisClient.set(message, botReply, { EX: 3600 });
       return res.json({ botResponse: botReply });
     }
@@ -188,20 +179,6 @@ app.post('/api/chat', async (req, res) => {
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
-
-// ✅ Debug Discord test endpoint
-// app.get('/debug/discord-test', async (req, res) => {
-//   try {
-//     await sendDiscordAlert(
-//       new Error("Manual Discord test error"),
-//       "This is a manual test from /debug/discord-test"
-//     );
-//     return res.json({ ok: true, message: "Discord alert sent (check your channel)" });
-//   } catch (e) {
-//     console.error("Failed to send test Discord alert:", e);
-//     return res.status(500).json({ error: "Failed to send Discord alert" });
-//   }
-// });
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
