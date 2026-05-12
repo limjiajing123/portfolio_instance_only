@@ -104,11 +104,16 @@ app.post('/api/chat', async (req, res) => {
     ];
 
     // First LLM call — with tools
-    const firstResponse = await axios.post(
-      'http://litellm:4000/chat/completions',
-      JSON.stringify({ model: 'portfolio-default', messages, tools }),
-      { headers: { Authorization: 'Bearer dummy', 'Content-Type': 'application/json' } }
-    );
+    const firstResponse = await axios({
+      method: 'post',
+      url: 'http://litellm:4000/chat/completions',
+      data: { model: 'portfolio-default', messages, tools },
+      headers: {
+        Authorization: 'Bearer dummy',
+        'Content-Type': 'application/json'
+      },
+      transformRequest: [(data) => JSON.stringify(data)]
+    });
 
     const firstChoice = firstResponse.data.choices[0];
 
@@ -150,12 +155,17 @@ app.post('/api/chat', async (req, res) => {
 
       console.log('Second call messages:', JSON.stringify(messages, null, 2));
 
-      const secondResponse = await axios.post(
-        'http://litellm:4000/chat/completions',
-        JSON.stringify({ model: 'portfolio-default', messages }),
-        { headers: { Authorization: 'Bearer dummy', 'Content-Type': 'application/json' } }
-      );
-
+      const secondResponse = await axios({
+        method: 'post',
+        url: 'http://litellm:4000/chat/completions',
+        data: { model: 'portfolio-default', messages },
+        headers: {
+          Authorization: 'Bearer dummy',
+          'Content-Type': 'application/json'
+        },
+        transformRequest: [(data) => JSON.stringify(data)]
+      });
+      
       const botReply = secondResponse.data.choices[0].message.content;
       await redisClient.set(message, botReply, { EX: 3600 });
       return res.json({ botResponse: botReply });
