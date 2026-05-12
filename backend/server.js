@@ -96,9 +96,9 @@ app.post('/api/chat', async (req, res) => {
       {
         role: 'system',
         content: `You are an AI assistant for Jia Jing's portfolio website.
-        Use the available tools to answer questions accurately.
-        Always use tools to get information rather than guessing.
-        Keep answers concise and friendly.`
+                  Use the available tools to fetch information, then summarize the results in a friendly, concise way.
+                  Never return raw tool calls or code blocks in your response.
+                  Always provide a human-readable answer based on the tool results.`
       },
       { role: 'user', content: message }
     ];
@@ -165,7 +165,7 @@ app.post('/api/chat', async (req, res) => {
         },
         transformRequest: [(data) => JSON.stringify(data)]
       });
-      
+
       const botReply = secondResponse.data.choices[0].message.content;
       await redisClient.set(message, botReply, { EX: 3600 });
       return res.json({ botResponse: botReply });
