@@ -3,10 +3,30 @@ const sendDiscordAlert = require("./discordAlertApiFail.js");
 
 console.log("NODE_ENV =", process.env.NODE_ENV);
 
-// ✅ Only patch axios mock; still start Express normally
+// NEW
 if (process.env.NODE_ENV === "test") {
   console.log("Running in test mode: axios is mocked");
   require('./axiosMock.js');
+
+  // Mock native fetch for LiteLLM calls
+  global.fetch = async (url, options) => {
+    if (url.includes('litellm')) {
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [{
+            finish_reason: 'stop',
+            message: {
+              content: 'This is a mocked response from LiteLLM ✅',
+              tool_calls: null
+            }
+          }]
+        })
+      };
+    }
+    // fallback to real fetch for other URLs
+    return globalThis.fetch(url, options);
+  };
 }
 
 const express = require('express');
