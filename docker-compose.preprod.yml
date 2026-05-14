@@ -14,6 +14,12 @@ services:
       - "8000:8000"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     restart: unless-stopped
 
   litellm:
@@ -30,10 +36,10 @@ services:
       - LITELLM_LOCAL_MODEL_COST_MAP=True
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health')"]
-      interval: 15s
-      timeout: 10s
-      retries: 5
-      start_period: 40s    # give LiteLLM time to boot before first check
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s    # ← reduced from 40s
     networks:
       - app-network
     restart: unless-stopped
@@ -49,7 +55,7 @@ services:
       redis:
         condition: service_started
       mcp-server:
-        condition: service_started
+        condition: service_healthy    # ← changed from service_started
     environment:
       - NODE_ENV=${NODE_ENV}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
