@@ -15,7 +15,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/mcp')"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -55,7 +55,7 @@ services:
       redis:
         condition: service_started
       mcp-server:
-        condition: service_healthy    # ← changed from service_started
+        condition: service_healthy  
     environment:
       - NODE_ENV=${NODE_ENV}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
