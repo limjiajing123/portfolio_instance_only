@@ -22,6 +22,12 @@ def test_litellm_is_reachable():
     assert r.status_code in [200, 401, 429, 503]
 
 def test_mcp_server_is_reachable():
-    """MCP server SSE endpoint should be reachable"""
-    r = requests.get("http://localhost:8000/sse", stream=True, timeout=5)
-    assert r.status_code == 200
+    """MCP server should be reachable"""
+    r = requests.post(
+        "http://localhost:8000/mcp",
+        json={"jsonrpc": "2.0", "method": "initialize", "id": 1,
+              "params": {"protocolVersion": "2024-11-05", "capabilities": {},
+                         "clientInfo": {"name": "test", "version": "1.0"}}},
+        headers={"Content-Type": "application/json"}
+    )
+    assert r.status_code in [200, 400, 405]

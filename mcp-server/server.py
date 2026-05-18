@@ -278,8 +278,7 @@ def search_portfolio(query: str) -> str:
 
 
 # ── Run ──────────────────────────────────────────────────────────────────────
-# NEW — correct way
 if __name__ == "__main__":
     import uvicorn
-    app = mcp.sse_app()
+    app = mcp.streamable_http_app()
     uvicorn.run(app, host="0.0.0.0", port=8000)
