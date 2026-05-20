@@ -18,8 +18,6 @@ services:
       test: ["CMD", "python3", "-c", "import socket; s=socket.socket(); s.connect(('localhost', 8000)); s.close()"]
       interval: 10s
       timeout: 5s
-      interval: 10s
-      timeout: 5s
       retries: 3
       start_period: 20s
     restart: unless-stopped
