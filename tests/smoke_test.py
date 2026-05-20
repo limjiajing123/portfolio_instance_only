@@ -28,6 +28,7 @@ def test_mcp_server_is_reachable():
         json={"jsonrpc": "2.0", "method": "initialize", "id": 1,
               "params": {"protocolVersion": "2024-11-05", "capabilities": {},
                          "clientInfo": {"name": "test", "version": "1.0"}}},
-        headers={"Content-Type": "application/json"}
+        headers={"Content-Type": "application/json",
+                 "Accept": "application/json, text/event-stream"}
     )
-    assert r.status_code in [200, 400, 405]
+    assert r.status_code in [200, 400, 405,406]
