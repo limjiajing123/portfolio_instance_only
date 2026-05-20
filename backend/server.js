@@ -3,7 +3,7 @@ const sendDiscordAlert = require("./discordAlertApiFail.js");
 
 console.log("NODE_ENV =", process.env.NODE_ENV);
 
-// NEW
+// Only patch axios mock in test mode
 if (process.env.NODE_ENV === "test") {
   console.log("Running in test mode: axios is mocked");
   require('./axiosMock.js');
@@ -24,7 +24,6 @@ if (process.env.NODE_ENV === "test") {
         })
       };
     }
-    // fallback to real fetch for other URLs
     return globalThis.fetch(url, options);
   };
 }
@@ -32,31 +31,27 @@ if (process.env.NODE_ENV === "test") {
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const redisClient = require('./redis'); // Import Redis client
-const { Client } = require('@modelcontextprotocol/sdk/client/index.js');
-const { SSEClientTransport } = require('@modelcontextprotocol/sdk/client/sse.js');
-
+const redisClient = require('./redis');
 
 const app = express();
 const port = 5000;
 
 const corsOptions = {
-  origin: ['https://www.limjiajing.com',],  // Frontend domain
+  origin: ['https://www.limjiajing.com'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,  // Allow credentials (cookies) to be sent
+  credentials: true,
 };
 
-app.use(cors(corsOptions));  // Apply CORS options
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Debugging logs
 console.log("Server starting...");
 console.log("NODE_ENV:", process.env.NODE_ENV || "not set");
 console.log("GEMINI API Key:", process.env.GEMINI_API_KEY ? "Loaded" : "Not Found");
 console.log("OpenRouter API Key (fallback):", process.env.OPENROUTER_API_KEY ? "Loaded" : "Not Found");
 
-// ── LiteLLM helper using native fetch (Node v18+) ────────────────────────────
+// LiteLLM helper using native fetch (Node v18+)
 async function litellmChat(body) {
   const response = await fetch('http://litellm:4000/chat/completions', {
     method: 'POST',
@@ -73,10 +68,10 @@ async function litellmChat(body) {
   return response.json();
 }
 
-// ── MCP Client helpers ───────────────────────────────────────────────────────
+// MCP Client helpers
 
 async function getMCPTools() {
-    if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test') {
     return [{
       type: 'function',
       function: {
@@ -86,31 +81,36 @@ async function getMCPTools() {
       }
     }];
   }
-  
-  const transport = new SSEClientTransport(
-    'http://mcp-server:8000/sse'
+
+  const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
+  const { StreamableHTTPClientTransport } = await import('@modelcontextprotocol/sdk/client/streamableHttp.js');
+
+  const transport = new StreamableHTTPClientTransport(
+    new URL('http://mcp-server:8000/mcp')
   );
   const client = new Client({ name: 'portfolio-backend', version: '1.0.0' });
   await client.connect(transport);
   const { tools } = await client.listTools();
   await client.close();
 
-  // Convert MCP tool format to OpenAI function calling format
   return tools.map(tool => ({
     type: 'function',
     function: {
       name: tool.name,
       description: tool.description,
       parameters: tool.inputSchema
-        ? JSON.parse(JSON.stringify(tool.inputSchema))  // deep clone to remove circular refs
+        ? JSON.parse(JSON.stringify(tool.inputSchema))
         : { type: 'object', properties: {} }
     }
   }));
 }
 
 async function callMCPTool(toolName, args) {
-  const transport = new SSEClientTransport(
-    'http://mcp-server:8000/sse'
+  const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
+  const { StreamableHTTPClientTransport } = await import('@modelcontextprotocol/sdk/client/streamableHttp.js');
+
+  const transport = new StreamableHTTPClientTransport(
+    new URL('http://mcp-server:8000/mcp')
   );
   const client = new Client({ name: 'portfolio-backend', version: '1.0.0' });
   await client.connect(transport);
@@ -118,6 +118,8 @@ async function callMCPTool(toolName, args) {
   await client.close();
   return result.content[0].text;
 }
+
+// Chat endpoint
 
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
@@ -149,7 +151,7 @@ Always provide a human-readable answer based on the tool results.`
       { role: 'user', content: message }
     ];
 
-    // First LLM call — with tools
+    // First LLM call - with tools
     const firstData = await litellmChat({ model: 'portfolio-default', messages, tools });
     const firstChoice = firstData.choices[0];
 
@@ -167,7 +169,7 @@ Always provide a human-readable answer based on the tool results.`
       console.log(`Tool result preview: ${String(toolResult).substring(0, 100)}`);
       console.log(`MCP tool result received for: ${toolName}`);
 
-      // Second LLM call — with tool result
+      // Second LLM call - with tool result
       messages.push({
         role: 'assistant',
         content: firstChoice.message.content || null,
@@ -193,7 +195,7 @@ Always provide a human-readable answer based on the tool results.`
       return res.json({ botResponse: botReply });
     }
 
-    // No tool call — direct response
+    // No tool call - direct response
     const botReply = firstChoice.message.content;
     await redisClient.set(message, botReply, { EX: 3600 });
     return res.json({ botResponse: botReply });
@@ -206,7 +208,8 @@ Always provide a human-readable answer based on the tool results.`
   }
 });
 
-// ✅ Health check endpoint
+// Health check
+
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
