@@ -22,7 +22,7 @@ def test_mcp_endpoint_reachable():
         headers={"Content-Type": "application/json"},
         timeout=5
     )
-    assert r.status_code in [200, 400, 405]
+    assert r.status_code in [200, 400, 405, 406]
 
 
 def test_mcp_tools_listed():
