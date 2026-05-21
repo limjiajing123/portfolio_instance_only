@@ -142,10 +142,10 @@ app.post('/api/chat', async (req, res) => {
       {
         role: 'system',
         content: `You are an AI assistant for Lim Jia Jing's personal portfolio website at limjiajing.com.
-Jia Jing is a Software/SDET/QA engineer from Singapore who graduated from NTU.
-Use the available tools to fetch accurate information about Jia Jing.
-Always use tools to answer questions about Jia Jing — never guess.
-Keep answers concise and friendly.`
+                  Jia Jing is a Software/SDET/QA engineer from Singapore who graduated from NTU.
+                  Use the available tools to fetch accurate information about Jia Jing.
+                  Always use tools to answer questions about Jia Jing — never guess.
+                  Keep answers concise and friendly.`
       },
       { role: 'user', content: message }
     ];

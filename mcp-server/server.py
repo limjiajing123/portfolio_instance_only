@@ -13,7 +13,7 @@ PORTFOLIO_DATA = {
         "linkedin": "https://www.linkedin.com/in/limjiajing123",
         "website": "https://limjiajing.com",
         "location": "Singapore",
-        "Residency Status": "Singapore Permanent Resident",
+        "residency_status": "Singapore Permanent Resident",
     },
     "summary": (
         "Aspiring Technology Consultant with experience in application development, "
@@ -22,7 +22,9 @@ PORTFOLIO_DATA = {
         "and AWS/Docker deployments. Blends QA/Dev expertise with strong analytical "
         "skills from robotics engineering (ROS, LiDAR/IMU, microservices). Passionate "
         "about contributing to national ICT projects and growing across Cloud, AppDev, "
-        "DevSecOps, Cybersecurity, and Infrastructure."
+        "DevSecOps, Cybersecurity, and Infrastructure. Recently built an AI-powered "
+        "portfolio chatbot using Model Context Protocol (MCP), LiteLLM, and Gemini AI, "
+        "and achieved Claude Certified Architect Foundation certification with a score of 983/1000."
     ),
     "education": {
         "university": "Nanyang Technological University, Singapore",
@@ -55,7 +57,7 @@ PORTFOLIO_DATA = {
                 "Created and executed test cases with Zephyr for Jira ensuring end-to-end traceability and Agile alignment",
                 "Collaborated with developers, BAs, and QA teams via Jira and Confluence",
                 "Actively participated in Agile SDLC sprints across full STLC",
-                "Projects: EDP, UOBPay, NZOC, UOB Infinity, TMRW",
+                "Projects: EDP, UOBPay, NZOC, UOB Infinity, TMRW, FLMS, FSCM",
             ],
         },
         {
@@ -87,25 +89,31 @@ PORTFOLIO_DATA = {
     ],
     "projects": [
         {
-            "name": "Personal Portfolio Website",
+            "name": "AI-Powered Personal Portfolio Website",
             "status": "Present (ongoing)",
             "description": (
-                "Full-stack portfolio with AI chatbot, LiteLLM gateway for provider-agnostic "
-                "LLM routing, MCP server with portfolio tools, Redis caching, and automated "
-                "CI/CD pipeline on AWS EC2."
+                "Full-stack portfolio with an AI chatbot powered by Model Context Protocol (MCP), "
+                "LiteLLM gateway for provider-agnostic LLM routing, Gemini AI for inference, "
+                "Redis caching, and automated CI/CD pipeline on AWS EC2. This is a real-world "
+                "AI engineering project demonstrating end-to-end AI system design."
             ),
             "highlights": [
-                "React frontend with Express.js AI chatbot backend, containerized with Docker on AWS EC2",
-                "Automated CI/CD with GitHub Actions — preproduction smoke tests, health checks, branch merge automation, Discord notifications",
-                "Redis caching reducing redundant API calls, improving response latency by ~40%",
-                "Secure AWS environment with VPC private subnets, NAT instances, ALB routing, VPC endpoints",
-                "LiteLLM proxy for cost-optimised LLM routing (Gemini free tier + OpenRouter fallback)",
-                "MCP server exposing portfolio tools (get_projects, get_skills, get_experience, etc.)",
-                "Leveraged Gen AI APIs for automated chatbot response generation",
+                "Built MCP server in Python (FastMCP) exposing 9 portfolio tools via Streamable HTTP transport — get_contact, get_summary, get_education, get_experience, get_projects, get_skills, get_achievements, get_leadership, search_portfolio",
+                "MCP client in Node.js backend uses dynamic ESM import() with StreamableHTTPClientTransport for tool-based AI responses",
+                "Gemini AI performs two-stage inference: first call selects the right MCP tool, second call summarizes tool results into natural language",
+                "LiteLLM proxy for cost-optimised LLM routing (Gemini free tier as primary, OpenRouter/Llama as fallback)",
+                "Redis caching reducing redundant API calls and improving response latency by ~40%",
+                "CI/CD pipeline with GitHub Actions: preproduction branch runs unit tests (mocked LLM), MCP integration tests, and smoke tests before auto-deploying to main",
+                "Containerized all services (React frontend, Node.js backend, Python MCP server, LiteLLM, Redis) with Docker and Docker Compose",
+                "Deployed on AWS EC2 with ECR container registry, Route53 DNS, HTTPS via Nginx reverse proxy",
+                "Discord webhook alerts for API errors with cooldown to prevent notification spam",
+                "Achieved Claude Certified Architect Foundation certification with score of 983/1000",
             ],
             "tech": [
-                "React", "Node.js", "Express", "Python", "Docker", "AWS EC2",
-                "GitHub Actions", "Redis", "LiteLLM", "Gemini", "MCP",
+                "React", "Node.js", "Express", "Python", "FastMCP",
+                "MCP (Model Context Protocol)", "LiteLLM", "Gemini AI", "OpenRouter",
+                "Redis", "Docker", "Docker Compose", "AWS EC2", "AWS ECR",
+                "GitHub Actions", "Nginx", "Streamable HTTP",
             ],
         },
         {
@@ -142,19 +150,34 @@ PORTFOLIO_DATA = {
     ],
     "skills": {
         "languages": ["Python", "C++", "C", "Golang", "Java", "JavaScript", "SQL"],
-        "frameworks": ["ReactJS", ".NET", "SpringBoot", "Pandas"],
-        "cloud_devops": ["AWS", "Docker", "Terraform", "Jenkins", "Redis", "GitHub Actions"],
-        "testing": ["Tricentis Tosca", "Postman", "Selenium", "Playwright", "Zephyr for Jira", "Perfecto"],
+        "frameworks": ["ReactJS", ".NET", "SpringBoot", "Pandas", "FastMCP"],
+        "cloud_devops": [
+            "AWS", "Docker", "Docker Compose", "Terraform", "Jenkins",
+            "Redis", "GitHub Actions", "AWS ECR", "AWS EC2", "Nginx",
+        ],
+        "testing": [
+            "Tricentis Tosca", "Postman", "Selenium", "Playwright",
+            "Zephyr for Jira", "Perfecto",
+        ],
         "databases": ["Oracle SQL", "Redis", "MySQL"],
         "tools": [
             "Linux", "Windows", "ROS1/2", "Git", "GitHub",
             "Jira", "Confluence", "Postman", "PuTTY", "Figma", "Microsoft Office",
         ],
-        "ai_ml": ["LiteLLM", "MCP (Model Context Protocol)", "Gemini API", "OpenRouter", "Gen AI APIs"],
-        "languages_spoken": ["English (Proficient)", "Chinese (Proficient)", "Malay (Basic)", "Thai (Basic)"],
+        "ai_ml": [
+            "LiteLLM", "MCP (Model Context Protocol)", "FastMCP",
+            "Gemini AI", "OpenRouter", "Gen AI APIs",
+            "Prompt Engineering", "K-modes Clustering", "Naive Bayes",
+            "Streamable HTTP Transport",
+        ],
+        "languages_spoken": [
+            "English (Proficient)", "Chinese (Proficient)",
+            "Malay (Basic)", "Thai (Basic)",
+        ],
     },
     "achievements": [
-        "Recipient of Associate of the Year Award GenC(2025)",
+        "Claude Certified Architect Foundation — Score: 983/1000",
+        "Recipient of Associate of the Year Award — GenC (2025)",
         "Recipient of Intern @ ST Engineering Award (Aug 2023)",
         "Bachelor of Engineering with Honours Distinction — NTU (May 2024)",
         "Final Year Project Grade: A — Navigation Among Crowds Algorithm for Robotic Wheelchair",
@@ -170,8 +193,8 @@ PORTFOLIO_DATA = {
             "role": "Captain",
             "organisation": "Basketball, Riverside Secondary School",
             "period": "Jan 2012 - Jan 2015",
-            "description": "Led team to paricipate in inter-school competitions, fostering teamwork and sportsmanship.",
-        }    
+            "description": "Led team to participate in inter-school competitions, fostering teamwork and sportsmanship.",
+        },
     ],
 }
 
@@ -251,6 +274,7 @@ def search_portfolio(query: str) -> str:
     for proj in PORTFOLIO_DATA["projects"]:
         searchable = (
             proj["name"] + proj["description"] + " ".join(proj.get("tech", []))
+            + " ".join(proj.get("highlights", []))
         ).lower()
         if query_lower in searchable:
             matched_proj.append(proj)
