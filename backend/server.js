@@ -129,24 +129,23 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    // Check Redis cache
     const cachedResponse = await redisClient.get(message);
     if (cachedResponse) {
       console.log('Returning cached response');
       return res.json({ botResponse: cachedResponse });
     }
 
-    // Get tools from MCP server
     const tools = await getMCPTools();
     console.log(`Loaded ${tools.length} MCP tools`);
 
     const messages = [
       {
         role: 'system',
-        content: `You are an AI assistant for Jia Jing's portfolio website.
-Use the available tools to fetch information, then summarize the results in a friendly, concise way.
-Never return raw tool calls or code blocks in your response.
-Always provide a human-readable answer based on the tool results.`
+        content: `You are an AI assistant for Lim Jia Jing's personal portfolio website at limjiajing.com.
+Jia Jing is a Software/SDET/QA engineer from Singapore who graduated from NTU.
+Use the available tools to fetch accurate information about Jia Jing.
+Always use tools to answer questions about Jia Jing — never guess.
+Keep answers concise and friendly.`
       },
       { role: 'user', content: message }
     ];
@@ -155,72 +154,64 @@ Always provide a human-readable answer based on the tool results.`
     const firstData = await litellmChat({ model: 'portfolio-default', messages, tools });
     const firstChoice = firstData.choices[0];
     console.log('First response finish_reason:', firstChoice.finish_reason);
-    console.log('First response content:', firstChoice.message.content);
-    console.log('First response tool_calls:', JSON.stringify(firstChoice.message.tool_calls));
+    console.log('First response tool_calls:', firstChoice.message.tool_calls ? 'yes' : 'none');
 
-    // If LLM wants to call a tool
-    if (firstChoice.finish_reason === 'tool_calls' && firstChoice.message.tool_calls) {
-      const toolCall = firstChoice.message.tool_calls[0];
-      const toolName = toolCall.function.name;
-      const toolArgs = JSON.parse(toolCall.function.arguments || '{}');
-
-      console.log(`MCP tool called: ${toolName}`, toolArgs);
-
-      // Call the tool via MCP server
-      const toolResult = await callMCPTool(toolName, toolArgs);
-      console.log(`Tool result type: ${typeof toolResult}`);
-      console.log(`Tool result preview: ${String(toolResult).substring(0, 100)}`);
-      console.log(`MCP tool result received for: ${toolName}`);
-
-      // Second LLM call - with tool result
-      messages.push({
-        role: 'assistant',
-        content: firstChoice.message.content || null,
-        tool_calls: firstChoice.message.tool_calls.map(tc => ({
-          id: tc.id,
-          type: tc.type,
-          function: {
-            name: tc.function.name,
-            arguments: tc.function.arguments
-          }
-        }))
-      });
-
-      messages.push({
-        role: 'tool',
-        tool_call_id: toolCall.id,
-        content: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult)
-      });
-
-      const secondData = await litellmChat({ model: 'portfolio-default', messages });
-      const botReply = secondData.choices[0].message.content;
+    // Direct response - no tool call
+    if (firstChoice.finish_reason !== 'tool_calls' || !firstChoice.message.tool_calls) {
+      const botReply = firstChoice.message.content;
       if (!botReply) {
-        console.log('Second LLM returned null content, choices:', JSON.stringify(secondData.choices[0]));
-        return res.status(500).json({ error: 'Something went wrong' });
+        console.log('LLM returned null with no tool calls');
+        return res.status(500).json({ error: 'No response from AI' });
       }
-      const botReplyStr = typeof botReply === 'string' ? botReply : JSON.stringify(botReply);
-      await redisClient.set(message, botReplyStr, { EX: 3600 });
-      return res.json({ botResponse: botReplyStr });
+      await redisClient.set(message, botReply, { EX: 3600 });
+      return res.json({ botResponse: botReply });
     }
 
-    // No tool call - direct response
-    const botReply = firstChoice.message.content;
+    // Tool call path
+    const toolCall = firstChoice.message.tool_calls[0];
+    const toolName = toolCall.function.name;
+    const toolArgs = JSON.parse(toolCall.function.arguments || '{}');
+    console.log(`MCP tool called: ${toolName}`, toolArgs);
+
+    const toolResult = await callMCPTool(toolName, toolArgs);
+    console.log(`Tool result preview: ${String(toolResult).substring(0, 100)}`);
+
+    messages.push({
+      role: 'assistant',
+      content: null,
+      tool_calls: firstChoice.message.tool_calls.map(tc => ({
+        id: tc.id,
+        type: tc.type,
+        function: { name: tc.function.name, arguments: tc.function.arguments }
+      }))
+    });
+
+    messages.push({
+      role: 'tool',
+      tool_call_id: toolCall.id,
+      content: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult)
+    });
+
+    const secondData = await litellmChat({ model: 'portfolio-default', messages });
+    const botReply = secondData.choices[0].message.content;
+
     if (!botReply) {
-      console.log('First LLM returned null content');
-      return res.status(500).json({ error: 'Something went wrong' });
-        }
+      console.log('Second LLM returned null:', JSON.stringify(secondData.choices[0]));
+      return res.status(500).json({ error: 'No response from AI' });
+    }
+
     const botReplyStr = typeof botReply === 'string' ? botReply : JSON.stringify(botReply);
     await redisClient.set(message, botReplyStr, { EX: 3600 });
     return res.json({ botResponse: botReplyStr });
+
   } catch (error) {
     console.error('Error interacting with LiteLLM:', error.message);
-    console.error('Stack:', error.stack); 
+    console.error('Stack:', error.stack);
     sendDiscordAlert(error, message).catch(e =>
       console.error("Failed to send Discord alert:", e.message));
     res.status(500).json({ error: 'Something went wrong' });
   }
 });
-
 // Health check
 
 app.get('/health', (req, res) => {
