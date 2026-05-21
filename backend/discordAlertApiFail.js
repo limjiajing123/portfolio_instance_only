@@ -1,4 +1,4 @@
-const axios = require("axios");
+// const axios = require("axios");
 
 // Cooldown state stored here
 let lastDiscordAlert = 0;
@@ -41,10 +41,15 @@ async function sendDiscordAlert(error, userMessage) {
       `**HTTP status:** ${status}`,
     ].join("\n");
 
-    await axios.post(webhookUrl, { content });
-  } catch (e) {
-    console.error("Failed to send Discord alert:", e.message);
-  }
-}
+    await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+
+      } catch (e) {
+        console.error("Failed to send Discord alert:", e.message);
+      }
+    }
 
 module.exports = sendDiscordAlert;
