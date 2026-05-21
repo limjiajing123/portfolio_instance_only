@@ -157,7 +157,7 @@ Keep answers concise and friendly.`
     console.log('First response tool_calls:', firstChoice.message.tool_calls ? 'yes' : 'none');
 
     // Direct response - no tool call
-    if (firstChoice.finish_reason !== 'tool_calls' || !firstChoice.message.tool_calls) {
+    if (!firstChoice.message.tool_calls || firstChoice.message.tool_calls.length === 0) {
       const botReply = firstChoice.message.content;
       if (!botReply) {
         console.log('LLM returned null with no tool calls');
