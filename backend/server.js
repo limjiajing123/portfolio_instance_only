@@ -154,6 +154,9 @@ Always provide a human-readable answer based on the tool results.`
     // First LLM call - with tools
     const firstData = await litellmChat({ model: 'portfolio-default', messages, tools });
     const firstChoice = firstData.choices[0];
+    console.log('First response finish_reason:', firstChoice.finish_reason);
+    console.log('First response content:', firstChoice.message.content);
+    console.log('First response tool_calls:', JSON.stringify(firstChoice.message.tool_calls));
 
     // If LLM wants to call a tool
     if (firstChoice.finish_reason === 'tool_calls' && firstChoice.message.tool_calls) {
