@@ -191,6 +191,10 @@ Always provide a human-readable answer based on the tool results.`
 
       const secondData = await litellmChat({ model: 'portfolio-default', messages });
       const botReply = secondData.choices[0].message.content;
+      if (!botReply) {
+        console.log('Second LLM returned null content, choices:', JSON.stringify(secondData.choices[0]));
+        return res.status(500).json({ error: 'Something went wrong' });
+      }
       const botReplyStr = typeof botReply === 'string' ? botReply : JSON.stringify(botReply);
       await redisClient.set(message, botReplyStr, { EX: 3600 });
       return res.json({ botResponse: botReplyStr });
@@ -198,6 +202,10 @@ Always provide a human-readable answer based on the tool results.`
 
     // No tool call - direct response
     const botReply = firstChoice.message.content;
+    if (!botReply) {
+      console.log('First LLM returned null content');
+      return res.status(500).json({ error: 'Something went wrong' });
+        }
     const botReplyStr = typeof botReply === 'string' ? botReply : JSON.stringify(botReply);
     await redisClient.set(message, botReplyStr, { EX: 3600 });
     return res.json({ botResponse: botReplyStr });
