@@ -191,15 +191,16 @@ Always provide a human-readable answer based on the tool results.`
 
       const secondData = await litellmChat({ model: 'portfolio-default', messages });
       const botReply = secondData.choices[0].message.content;
-      await redisClient.set(message, botReply, { EX: 3600 });
-      return res.json({ botResponse: botReply });
+      const botReplyStr = typeof botReply === 'string' ? botReply : JSON.stringify(botReply);
+      await redisClient.set(message, botReplyStr, { EX: 3600 });
+      return res.json({ botResponse: botReplyStr });
     }
 
     // No tool call - direct response
     const botReply = firstChoice.message.content;
-    await redisClient.set(message, botReply, { EX: 3600 });
-    return res.json({ botResponse: botReply });
-
+    const botReplyStr = typeof botReply === 'string' ? botReply : JSON.stringify(botReply);
+    await redisClient.set(message, botReplyStr, { EX: 3600 });
+    return res.json({ botResponse: botReplyStr });
   } catch (error) {
     console.error('Error interacting with LiteLLM:', error.message);
     console.error('Stack:', error.stack); 
