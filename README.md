@@ -1,299 +1,337 @@
-🚀 Jia Jing’s Full-Stack Portfolio Website
-AI-Powered • Dockerized • CI/CD Automated • AWS Deployed
-<div align="center">
+# AI-Powered Portfolio Chatbot
 
-🔹 React Frontend
-🔹 Node.js Express Backend
-🔹 AI Chatbot (OpenRouter)
-🔹 Redis Caching
-🔹 AWS EC2 + ECS-style Deployment
-🔹 Docker Compose Architecture
-🔹 GitHub Actions CI/CD + Monitoring
-🔹 Discord Alerts for Production Failures
+> Full-stack AI engineering project demonstrating Model Context Protocol (MCP), LiteLLM gateway, LangFuse observability, and automated CI/CD on AWS EC2.
 
-</div>
-🌐 Live Website
+**Live site:** [limjiajing.com](https://www.limjiajing.com) · **Author:** [Lim Jia Jing](https://www.linkedin.com/in/limjiajing123)
 
-👉 https://www.limjiajing.com
+---
 
-This is the production version of my personal portfolio website, fully deployed on AWS and backed by a smart AI assistant with caching, monitoring, and automated health checks.
+## What this project is
 
-🧩 Project Overview
+A personal portfolio website with an AI chatbot that answers questions about my background, skills, and experience. Built not just as a portfolio showcase, but as a real-world AI engineering system — with proper tool-augmented inference, observability, caching, and a three-layer CI/CD pipeline.
 
-This project is a full-stack, production-ready portfolio system that includes:
+> **Claude Certified Architect Foundation** — Score: 983/1000
 
-⚛️ React frontend served by Nginx
+---
 
-🟩 Node.js backend API
+## Architecture
 
-🤖 AI-powered chatbot (OpenRouter → DeepSeek/Grok models)
+```
+User (Browser)
+      │
+      ▼
+React Frontend (Nginx · port 82)
+      │  HTTPS via reverse proxy
+      ▼
+Node.js / Express Backend (port 5000)
+      │              │               │
+      ▼              ▼               ▼
+MCP Server      LiteLLM           Redis
+(Python)        Gateway           Cache
+(port 8000)     (port 4000)
+                     │
+              ┌──────┴──────────┐
+              ▼                 ▼
+          Gemini AI         OpenRouter
+          (primary)         (fallback)
+              │
+              ▼
+          LangFuse
+       (observability)
 
-🧠 Redis cache layer
+All services containerized · AWS EC2 · GitHub Actions CI/CD
+```
 
-🐳 Dockerized microservice architecture
+---
 
-☁️ EC2-based deployment (via script & GitHub Actions)
+## How the AI chatbot works
 
-🔄 Automated CI/CD (preprod → main auto-merge + deploy)
+The chatbot uses a **two-stage inference pattern** via Model Context Protocol (MCP):
 
-🚨 Health monitoring & Discord alert system
+### Why MCP instead of context injection?
 
-🧪 Preproduction smoke testing (pytest + Docker Compose)
+Traditional approach: dump the entire knowledge base into every prompt — wasteful, expensive, and imprecise.
 
-🛠️ Tech Stack
-Frontend
+MCP approach: define 9 specific tools. Gemini selects only the relevant tool and fetches precise data. Fewer tokens, higher accuracy, scales cleanly as portfolio data grows.
 
-React
+### Stage 1 — Tool selection
 
-Styled Components
+```
+User: "what is jia jing's current job?"
+              │
+              ▼
+    First Gemini call
+    (receives list of 9 MCP tools)
+              │
+              ▼
+    Gemini decides: call get_experience()
+```
 
-Axios
+### Stage 2 — Response generation
 
-Nginx (serving build output)
+```
+    MCP server executes get_experience()
+    Returns: raw work history JSON
+              │
+              ▼
+    Second Gemini call
+    (summarises tool result into natural language)
+              │
+              ▼
+    "Jia Jing currently works at Cognizant/UOB
+     as a Test Automation Software Analyst..."
+```
 
-Backend
+---
 
-Node.js
+## MCP Tools (9 total)
 
-Express
+| Tool | Returns |
+|---|---|
+| `get_contact` | Email, phone, LinkedIn, website |
+| `get_summary` | Professional summary |
+| `get_education` | NTU degree, coursework |
+| `get_experience` | Full work history with responsibilities |
+| `get_projects` | Projects with tech stack and highlights |
+| `get_skills` | Languages, frameworks, cloud, AI/ML, testing |
+| `get_achievements` | Awards and certifications |
+| `get_leadership` | Leadership and co-curricular roles |
+| `search_portfolio` | Keyword search across all portfolio data |
 
-OpenRouter API
+---
 
-Redis (Upstash in production)
+## Tech stack
 
-DevOps / Infra
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend | React, Styled Components, Nginx | Portfolio UI |
+| Backend | Node.js, Express.js | Chat API, orchestration |
+| MCP Server | Python, FastMCP | 9 portfolio tools via Streamable HTTP |
+| LLM Gateway | LiteLLM | Provider-agnostic routing and fallback |
+| Primary LLM | Gemini AI (free tier) | Two-stage inference |
+| Fallback LLM | OpenRouter | Automatic failover on rate limits |
+| Cache | Redis | Response caching (~40% latency improvement) |
+| Observability | LangFuse | Token usage, latency, cost, error tracking |
+| Containers | Docker, Docker Compose | All services containerized |
+| Registry | AWS ECR | Container image storage |
+| Hosting | AWS EC2 | Production deployment |
+| CI/CD | GitHub Actions | Automated testing and deployment |
+| Reverse Proxy | Nginx | HTTPS, routing |
+| Alerts | Discord Webhooks | API error notifications with cooldown |
 
-Docker
+---
 
-Docker Compose
+## CI/CD pipeline
 
-AWS EC2
+```
+Push to preproduction branch
+          │
+          ▼
+┌──────────────────────────────────┐
+│        GitHub Actions CI         │
+│                                  │
+│  Step 1 — Unit tests             │
+│  • LiteLLM and MCP mocked        │
+│  • Tests backend logic only      │
+│  • Deterministic, always pass    │
+│                                  │
+│  Step 2 — MCP integration tests  │
+│  • Real Python MCP server        │
+│  • Verifies all 9 tools return   │
+│    correct data                  │
+│  • No LLM involved               │
+│                                  │
+│  Step 3 — Smoke tests            │
+│  • Health checks all services    │
+│  • Backend, LiteLLM, MCP, Redis  │
+└──────────────────────────────────┘
+          │ all pass
+          ▼
+   Merge to main branch
+          │
+          ▼
+┌──────────────────────────────────┐
+│       Deploy Workflow            │
+│  • Build Docker images           │
+│  • Push to AWS ECR               │
+│  • SSH into EC2                  │
+│  • Run deploy.sh                 │
+│  • Pull and restart containers   │
+└──────────────────────────────────┘
+          │
+          ▼
+   Discord notification
+   (success or failure)
+```
 
-AWS ECR
+### Why mocked LLM tests in CI?
 
-GitHub Actions
+LLM calls are non-deterministic and rate-limited — they make unreliable CI tests. Unit tests mock the LLM to test whether the backend *handles* a successful response correctly. MCP integration tests verify tool correctness without any LLM involvement. Only deterministic tests run in CI.
 
-Reverse proxy architecture
+---
 
-Secure environment variables & secrets
+## LangFuse observability
 
-Monitoring
+Every LLM call is tracked automatically via LiteLLM's native LangFuse callback integration:
 
-Discord Alerts
+- Full prompt and response for every request
+- Token usage and estimated cost per call
+- Latency breakdown across both Gemini calls
+- Error tracking with stack traces
+- Usage trends over time
 
-GitHub Actions scheduled health checks
+Enabled by adding `success_callback: ["langfuse"]` and `failure_callback: ["langfuse"]` to `litellm_config.yaml` — no code changes required.
 
-Error notification system built directly into backend
+---
 
-🧱 Project Architecture
-1️⃣ High-Level System Architecture
-2️⃣ Docker + AWS Deployment Architecture
-3️⃣ AI Chatbot Request Flow
-📁 Folder Structure
+## Folder structure
 
-A clean, readable, professional folder visualization.
-
-📦 portfolio_instance_only
+```
+portfolio_instance_only/
 │
-├── 📁 backend
-│   ├── server.js
-│   ├── redis.js
-│   ├── discordAlertApiFail.js
-│   ├── axiosMock.js
-│   ├── portfolioKnowledge.js
+├── backend/
+│   ├── server.js                 # Main Express server, MCP client, LiteLLM calls
+│   ├── redis.js                  # Redis client setup
+│   ├── discordAlertApiFail.js    # Discord webhook alerts
+│   ├── axiosMock.js              # Axios mock for unit tests
 │   ├── package.json
-│   ├── package-lock.json
 │   └── Dockerfile
 │
-├── 📁 frontend
-│   ├── public
-│   │   ├── index.html
-│   │   ├── favicon.ico
-│   │   └── robots.txt
-│   │
-│   ├── src
+├── frontend/
+│   ├── src/
 │   │   ├── components/
-│   │   │   ├── Chatbot/
-│   │   │   └── UI/
+│   │   │   ├── Chatbot/          # AI chatbot UI component
+│   │   │   └── UI/               # Shared UI components
 │   │   ├── pages/
-│   │   │   ├── Home.js
-│   │   │   └── About.js
-│   │   ├── hooks/
-│   │   ├── App.js
-│   │   └── index.js
-│   │
+│   │   └── App.js
 │   ├── package.json
-│   ├── package-lock.json
 │   └── Dockerfile
 │
-├── 📁 tests
-│   ├── smoke_test.py
-│   ├── test_backend.py
+├── mcp-server/
+│   ├── server.py                 # FastMCP server with 9 portfolio tools
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── tests/
+│   ├── smoke_test.py             # Health checks for all services
+│   ├── test_backend.py           # Unit tests (mocked LLM)
+│   ├── test_mcp.py               # MCP integration tests
 │   └── test_frontend.py
 │
-├── docker-compose.yml
-├── docker-compose.preprod.yml
-├── deploy.sh
-├── open-router-monitor.yml
-└── README.md
+├── .github/workflows/
+│   ├── preprod.yml               # CI: test pipeline
+│   └── deploy.yml                # CD: deploy to EC2
+│
+├── docker-compose.preprod.yml    # Preprod test environment
+├── litellm_config.example.yaml   # LiteLLM config template
+└── deploy.sh                     # EC2 deployment script
+```
 
-🧠 AI Chatbot Logic Explained
-User Message
-    ↓
-Frontend (React)
-    ↓
-Backend (/api/chat)
-    ↓
-Redis Cache
-    ├── Cache Hit → return instantly
-    └── Cache Miss → call OpenRouter AI
-                          ↓
-                     Save to Redis
-                          ↓
-                      Return to user
+---
 
+## Local setup
 
-✔ Caching reduces OpenRouter cost
-✔ Faster repeated responses
-✔ Discord alert triggers if API fails
+### Prerequisites
+- Docker and Docker Compose
+- Gemini API key — free at [aistudio.google.com](https://aistudio.google.com)
+- OpenRouter API key — free at [openrouter.ai](https://openrouter.ai)
+- LangFuse account — free at [cloud.langfuse.com](https://cloud.langfuse.com)
 
-⚙️ CI/CD Pipeline
-
-Automated using GitHub Actions:
-
-1️⃣ Preproduction branch (testing stage)
-
-Build frontend & backend
-
-Start services via Docker Compose
-
-Run Python smoke tests
-
-Mock AI responses
-
-If all good → auto-trigger deploy job
-
-2️⃣ Auto-merge preproduction → main
-
-GitHub Actions merges branches
-
-Commits tagged with [skip ci] to avoid loops
-
-3️⃣ Deployment to EC2
-
-Build Docker images
-
-Push to ECR
-
-SSH into EC2
-
-Run deploy.sh (pull & restart containers)
-
-4️⃣ Post-deploy health checks
-
-Frontend load check
-
-Backend health endpoint
-
-Discord success/failure notification
-
-🚨 Monitoring & Alerts
-Backend error alerts (Discord)
-
-If /api/chat fails → instant Discord message:
-
-Timestamp
-
-User message
-
-Error status
-
-Error details
-
-Cooldown to prevent spam
-
-Scheduled OpenRouter Monitoring
-
-Every 30 minutes:
-
-GitHub Actions pings OpenRouter
-
-If unhealthy → Discord alert
-
-🐳 Docker Development
-Start everything locally:
-docker-compose up --build
-
-Preproduction environment:
-NODE_ENV=test docker-compose -f docker-compose.preprod.yml up --build
-
-
-Frontend → http://localhost:82
-
-
-Backend → http://localhost:5000
-
-
-Redis → redis://localhost:6379
-
-☁️ Deployment Script (deploy.sh)
-
-The EC2 instance:
-
-Logs into ECR
-
-Pulls fresh images
-
-Rebuilds Redis, backend, frontend containers
-
-Automatically restarts everything
-
-No downtime. Fully automated.
-
-🔒 Environment Variables
-Backend:
-REDIS_PORT=6379
-NODE_ENV=production
-
-Frontend:
-
-None required.
-
-📦 Install (Local Development)
+### 1. Clone the repo
+```bash
 git clone https://github.com/limjiajing123/portfolio_instance_only.git
 cd portfolio_instance_only
-docker-compose up --build
+```
 
-🎨 Screenshots / Demo (Optional)
+### 2. Set up LiteLLM config
+```bash
+cp litellm_config.example.yaml litellm_config.yaml
+# Add your API keys to litellm_config.yaml
+```
 
-(Add your own images here if you want visual showcase.)
+### 3. Set environment variables
+Create a `.env` file in the root:
+```env
+GEMINI_API_KEY=your_gemini_key
+OPENROUTER_API_KEY=your_openrouter_key
+DISCORD_WEBHOOK_URL=your_webhook_url
+LANGFUSE_SECRET_KEY=your_langfuse_secret
+LANGFUSE_PUBLIC_KEY=your_langfuse_public
+LANGFUSE_HOST=https://cloud.langfuse.com
+```
 
-🙌 Creator
+### 4. Start all services
+```bash
+docker compose up -d --build
+```
 
-Built entirely by Jia Jing
-🔗 https://www.limjiajing.com
+### 5. Test
+```bash
+# Health check
+curl http://localhost:5000/health
 
-Skills demonstrated:
+# Test the chatbot
+curl -X POST http://localhost:5000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "what is jia jing email?"}'
+```
 
-Full-stack engineering
+### Local service ports
+| Service | Port |
+|---|---|
+| Frontend | http://localhost:82 |
+| Backend | http://localhost:5000 |
+| MCP Server | http://localhost:8000 |
+| LiteLLM | http://localhost:4000 |
+| Redis | redis://localhost:6379 |
 
-DevOps + AWS Infrastructure
+---
 
-CI/CD orchestration
+## Key engineering decisions
 
-AI integration
+### Why LiteLLM instead of calling Gemini directly?
+Vendor lock-in avoidance. LiteLLM provides a single OpenAI-compatible interface. Switching from Gemini to Claude or Llama requires changing one line in a config file. It also handles automatic fallback routing when Gemini hits rate limits.
 
-Docker & service networking
+### Why MCP instead of context injection?
+Token efficiency and precision. Injecting the full portfolio as context on every request wastes tokens. MCP lets Gemini fetch only the data relevant to each question — reducing cost and improving answer accuracy.
 
-Monitoring & alerting
+### Why Redis caching?
+The same question asked twice does not need two LLM calls. Redis caches responses with a 1-hour TTL, reducing API costs and improving response latency by approximately 40%.
 
-Testing automation
+### Why not ECS or EKS for production?
+Intentional choice to learn deployment fundamentals. Understanding what managed services abstract away makes you a better engineer. The manual deploy script approach teaches EC2, ECR, networking, and container orchestration directly. ECS was explored during earlier phases of the project.
 
-⭐ If you like this project…
+---
 
-Feel free to:
+## Hardest bug fixed
 
-🌟 Star the repo
-🤝 Contact me for opportunities
-💬 Ask questions
-📧 Connect via email
+**MCP SDK ESM/CommonJS incompatibility — `ERR_REQUIRE_ASYNC_MODULE`**
+
+The backend crashed on startup because the MCP SDK (`@modelcontextprotocol/sdk`) uses ESM modules with top-level `await`, which CommonJS `require()` cannot load synchronously. The error message looked like a URL format issue — misleading and hard to trace.
+
+Fix: switched from `require()` to dynamic `await import()` inside the MCP client functions, and pinned compatible versions between the Python server (`mcp==1.9.0`) and Node.js client (`@modelcontextprotocol/sdk@1.10.0`). They need to speak the same MCP protocol version.
+
+**Lesson:** Error messages from module loaders are often symptoms, not root causes. Always check SDK changelogs when upgrading. Pin exact versions in production.
+
+---
+
+## What I'd build next
+
+- **RAG pipeline** — store portfolio data in a vector database for semantic search instead of exact keyword matching in `search_portfolio`
+- **LangFuse evals** — automated scoring of response quality, not just logging
+- **Streaming responses** — stream Gemini output token by token for better UX
+- **ECS migration** — move from manual deploy script to AWS ECS for automatic scaling and health management
+
+---
+
+## Author
+
+**Lim Jia Jing** — Software Engineer, Singapore
+
+- Email: limjiajing123@gmail.com
+- LinkedIn: [linkedin.com/in/limjiajing123](https://www.linkedin.com/in/limjiajing123)
+- Website: [limjiajing.com](https://limjiajing.com)
+
+---
+
+*Built entirely from scratch — no boilerplate AI project templates.*

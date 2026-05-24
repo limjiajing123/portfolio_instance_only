@@ -210,7 +210,7 @@ app.post('/api/chat', async (req, res) => {
     console.error('Error interacting with LiteLLM:', error.message);
     console.error('Stack:', error.stack);
     sendDiscordAlert(error, message).catch(e =>
-      console.error("Failed to send Discord alert:", e.message));
+    console.error("Failed to send Discord alert:", e.message));
     res.status(500).json({ error: 'Something went wrong' });
   }
 });
