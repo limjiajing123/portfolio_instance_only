@@ -1,5 +1,6 @@
 from mcp.server.fastmcp import FastMCP
 import json
+import os
 
 mcp = FastMCP("portfolio-server")
 
@@ -20,11 +21,10 @@ PORTFOLIO_DATA = {
         "cloud computing, DevSecOps practices, and large-scale system testing. "
         "Skilled in Python, Java, JavaScript, SQL, API testing, CI/CD workflows, "
         "and AWS/Docker deployments. Blends QA/Dev expertise with strong analytical "
-        "skills from robotics engineering (ROS, LiDAR/IMU, microservices). Passionate "
-        "about contributing to national ICT projects and growing across Cloud, AppDev, "
-        "DevSecOps, Cybersecurity, and Infrastructure. Recently built an AI-powered "
-        "portfolio chatbot using Model Context Protocol (MCP), LiteLLM, and Gemini AI, "
-        "and achieved Claude Certified Architect Foundation certification with a score of 983/1000."
+        "skills from robotics engineering (ROS, LiDAR/IMU, microservices). Recently "
+        "built an AI-powered portfolio chatbot using MCP, LiteLLM, Gemini AI, and a "
+        "production RAG pipeline, and achieved Claude Certified Architect Foundation "
+        "certification with a score of 983/1000."
     ),
     "education": {
         "university": "Nanyang Technological University, Singapore",
@@ -32,9 +32,7 @@ PORTFOLIO_DATA = {
         "specialisation": "Robotics and Mechatronics",
         "period": "Aug 2020 - May 2024",
         "coursework": [
-            "Robotics",
-            "Mechatronics Engineering Design",
-            "Machine Intelligence",
+            "Robotics", "Mechatronics Engineering Design", "Machine Intelligence",
             "Realtime Software for Mechatronics System",
             "Introduction to Data Science and Artificial Intelligence",
             "Introduction to Computational Thinking",
@@ -50,14 +48,14 @@ PORTFOLIO_DATA = {
             "domain": "Banking Financial Services, UOB",
             "period": "June 2024 - Present",
             "highlights": [
-                "Automated progression, regression, smoke, sanity, system, and usability testing using Tricentis Tosca, reducing release defects",
+                "Automated progression, regression, smoke, sanity, system, and usability testing using Tricentis Tosca",
                 "Conducted functional and non-functional testing on B2B and B2C platforms (iOS, Android, Web, AS400) for TMRW and UOB Infinity using Perfecto, Postman, Oracle SQL, and SSH",
-                "Performed API testing using Postman — validating JSON responses, status codes, and error handling for backend service reliability",
+                "Performed API testing using Postman — validating JSON responses, status codes, and error handling",
                 "Deployed defect-fixed builds from SIT to UAT using Jenkins, improving CI/CD pipeline efficiency",
-                "Created and executed test cases with Zephyr for Jira ensuring end-to-end traceability and Agile alignment",
+                "Created and executed test cases with Zephyr for Jira ensuring end-to-end traceability",
                 "Collaborated with developers, BAs, and QA teams via Jira and Confluence",
                 "Actively participated in Agile SDLC sprints across full STLC",
-                "Projects: EDP, UOBPay, NZOC, UOB Infinity, TMRW, FLMS, FSCM",
+                "Projects: EDP, UOBPay, NZOC, UOB Infinity, TMRW",
             ],
         },
         {
@@ -83,7 +81,6 @@ PORTFOLIO_DATA = {
                 "Adapted open-source RDS collision-avoidance code for shared human-robot wheelchair control",
                 "Built Python scripts for automated data logging and custom performance metrics",
                 "Engineered simulation pipelines in Gazebo with custom RViz GUIs",
-                "Demonstrated that treating moving obstacles as static yielded safer navigation than dynamic modeling",
             ],
         },
     ],
@@ -93,27 +90,26 @@ PORTFOLIO_DATA = {
             "status": "Present (ongoing)",
             "description": (
                 "Full-stack portfolio with an AI chatbot powered by Model Context Protocol (MCP), "
-                "LiteLLM gateway for provider-agnostic LLM routing, Gemini AI for inference, "
-                "Redis caching, and automated CI/CD pipeline on AWS EC2. This is a real-world "
-                "AI engineering project demonstrating end-to-end AI system design."
+                "LiteLLM gateway, Gemini AI, Redis caching, a production RAG pipeline, and automated "
+                "CI/CD on AWS EC2."
             ),
             "highlights": [
-                "Built MCP server in Python (FastMCP) exposing 9 portfolio tools via Streamable HTTP transport — get_contact, get_summary, get_education, get_experience, get_projects, get_skills, get_achievements, get_leadership, search_portfolio",
-                "MCP client in Node.js backend uses dynamic ESM import() with StreamableHTTPClientTransport for tool-based AI responses",
-                "Gemini AI performs two-stage inference: first call selects the right MCP tool, second call summarizes tool results into natural language",
-                "LiteLLM proxy for cost-optimised LLM routing (Gemini free tier as primary, OpenRouter/Llama as fallback)",
+                "Built MCP server in Python (FastMCP) exposing portfolio tools via Streamable HTTP transport",
+                "MCP client in Node.js backend uses dynamic ESM import() with StreamableHTTPClientTransport",
+                "Gemini AI performs two-stage inference: first call selects the tool, second summarizes results",
+                "LiteLLM proxy for cost-optimised LLM routing (Gemini primary, OpenRouter fallback)",
                 "Redis caching reducing redundant API calls and improving response latency by ~40%",
-                "CI/CD pipeline with GitHub Actions: preproduction branch runs unit tests (mocked LLM), MCP integration tests, and smoke tests before auto-deploying to main",
-                "Containerized all services (React frontend, Node.js backend, Python MCP server, LiteLLM, Redis) with Docker and Docker Compose",
-                "Deployed on AWS EC2 with ECR container registry, Route53 DNS, HTTPS via Nginx reverse proxy",
-                "Discord webhook alerts for API errors with cooldown to prevent notification spam",
+                "Production RAG pipeline: hybrid search (BM25 + Cohere embeddings on Pinecone) with Cohere reranking, exposed as a semantic search MCP tool",
+                "CI/CD pipeline with GitHub Actions: unit tests, MCP integration tests, smoke tests",
+                "Deployed on AWS EC2 with ECR, Route53, Nginx reverse proxy",
+                "LangFuse observability tracking token usage, latency, and cost",
                 "Achieved Claude Certified Architect Foundation certification with score of 983/1000",
             ],
             "tech": [
-                "React", "Node.js", "Express", "Python", "FastMCP",
+                "Python", "Node.js", "Express", "React", "FastMCP",
                 "MCP (Model Context Protocol)", "LiteLLM", "Gemini AI", "OpenRouter",
-                "Redis", "Docker", "Docker Compose", "AWS EC2", "AWS ECR",
-                "GitHub Actions", "Nginx", "Streamable HTTP",
+                "Redis", "Docker", "AWS EC2", "AWS ECR", "GitHub Actions", "Nginx",
+                "Pinecone", "Cohere", "RAG",
             ],
         },
         {
@@ -133,7 +129,7 @@ PORTFOLIO_DATA = {
             "institution": "NTU Machine Intelligence",
             "description": (
                 "Market survey analysis (n=50) using K-modes clustering, Multinomial Naive Bayes, "
-                "and Association Rule Mining to identify customer personas and customisation patterns."
+                "and Association Rule Mining to identify customer personas."
             ),
             "tech": ["Python", "Pandas", "scikit-learn"],
         },
@@ -143,7 +139,7 @@ PORTFOLIO_DATA = {
             "institution": "NTU Realtime Software for Mechatronics System",
             "description": (
                 "Real-time waveform generator in C with multi-threading, timers, interrupts, "
-                "D/A output control, and CLI configuration for oscilloscope visualization."
+                "D/A output control, and CLI configuration."
             ),
             "tech": ["C", "Real-time systems", "Multi-threading"],
         },
@@ -151,29 +147,12 @@ PORTFOLIO_DATA = {
     "skills": {
         "languages": ["Python", "C++", "C", "Golang", "Java", "JavaScript", "SQL"],
         "frameworks": ["ReactJS", ".NET", "SpringBoot", "Pandas", "FastMCP"],
-        "cloud_devops": [
-            "AWS", "Docker", "Docker Compose", "Terraform", "Jenkins",
-            "Redis", "GitHub Actions", "AWS ECR", "AWS EC2", "Nginx",
-        ],
-        "testing": [
-            "Tricentis Tosca", "Postman", "Selenium", "Playwright",
-            "Zephyr for Jira", "Perfecto",
-        ],
+        "cloud_devops": ["AWS", "Docker", "Docker Compose", "Terraform", "Jenkins", "Redis", "GitHub Actions", "AWS ECR", "AWS EC2", "Nginx"],
+        "testing": ["Tricentis Tosca", "Postman", "Selenium", "Playwright", "Zephyr for Jira", "Perfecto"],
         "databases": ["Oracle SQL", "Redis", "MySQL"],
-        "tools": [
-            "Linux", "Windows", "ROS1/2", "Git", "GitHub",
-            "Jira", "Confluence", "Postman", "PuTTY", "Figma", "Microsoft Office",
-        ],
-        "ai_ml": [
-            "LiteLLM", "MCP (Model Context Protocol)", "FastMCP",
-            "Gemini AI", "OpenRouter", "Gen AI APIs",
-            "Prompt Engineering", "K-modes Clustering", "Naive Bayes",
-            "Streamable HTTP Transport",
-        ],
-        "languages_spoken": [
-            "English (Proficient)", "Chinese (Proficient)",
-            "Malay (Basic)", "Thai (Basic)",
-        ],
+        "ai_ml": ["LiteLLM", "MCP (Model Context Protocol)", "FastMCP", "Gemini AI", "OpenRouter", "Pinecone", "Cohere", "RAG", "Prompt Engineering"],
+        "tools": ["Linux", "Windows", "ROS1/2", "Git", "GitHub", "Jira", "Confluence", "PuTTY", "Figma"],
+        "languages_spoken": ["English (Proficient)", "Chinese (Proficient)", "Malay (Basic)", "Thai (Basic)"],
     },
     "achievements": [
         "Claude Certified Architect Foundation — Score: 983/1000",
@@ -187,16 +166,73 @@ PORTFOLIO_DATA = {
             "role": "Captain",
             "organisation": "Table Tennis, NTU Hall 12",
             "period": "Jan 2021 - Jan 2022",
-            "description": "Led weekly training sessions for 20-30 individuals, maintaining discipline and collaborative learning.",
+            "description": "Led weekly training sessions for 20-30 individuals.",
         },
         {
             "role": "Captain",
             "organisation": "Basketball, Riverside Secondary School",
             "period": "Jan 2012 - Jan 2015",
-            "description": "Led team to participate in inter-school competitions, fostering teamwork and sportsmanship.",
+            "description": "Led team in inter-school competitions.",
         },
     ],
 }
+
+# ── RAG pipeline (lazy, built once at startup) ───────────────────────────────
+# Wrapped in try/except so the 9 structured tools still work even if
+# RAG dependencies or API keys are unavailable.
+
+_rag_retriever = None
+_rag_available = False
+
+def _init_rag():
+    """Build the RAG retriever once. Returns True if successful."""
+    global _rag_retriever, _rag_available
+    try:
+        from langchain_cohere import CohereEmbeddings, CohereRerank
+        from langchain_pinecone import PineconeVectorStore
+        from langchain_community.retrievers import BM25Retriever
+        from langchain_classic.retrievers import EnsembleRetriever, ContextualCompressionRetriever
+        from langchain_core.documents import Document
+        from portfolio_data import SECTIONS
+
+        if not os.environ.get("COHERE_API_KEY") or not os.environ.get("PINECONE_API_KEY"):
+            print("RAG: API keys not set, semantic search tool disabled.")
+            return False
+
+        embeddings = CohereEmbeddings(
+            model="embed-english-v3.0",
+            cohere_api_key=os.environ["COHERE_API_KEY"]
+        )
+        vectorstore = PineconeVectorStore.from_existing_index(
+            index_name="portfolio-rag",
+            embedding=embeddings
+        )
+        semantic_retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
+
+        documents = [Document(page_content=s["content"], metadata={"section": s["section"]})
+                     for s in SECTIONS]
+        bm25_retriever = BM25Retriever.from_documents(documents)
+        bm25_retriever.k = 6
+
+        hybrid = EnsembleRetriever(
+            retrievers=[bm25_retriever, semantic_retriever],
+            weights=[0.4, 0.6]
+        )
+        reranker = CohereRerank(
+            model="rerank-english-v3.0",
+            cohere_api_key=os.environ["COHERE_API_KEY"],
+            top_n=3
+        )
+        _rag_retriever = ContextualCompressionRetriever(
+            base_compressor=reranker,
+            base_retriever=hybrid
+        )
+        _rag_available = True
+        print("RAG: semantic search pipeline ready.")
+        return True
+    except Exception as e:
+        print(f"RAG: initialization failed ({e}), semantic search tool disabled.")
+        return False
 
 # ── Tools ────────────────────────────────────────────────────────────────────
 
@@ -251,58 +287,76 @@ def get_leadership() -> str:
 @mcp.tool()
 def search_portfolio(query: str) -> str:
     """
-    Search across all portfolio content for a specific topic or keyword.
-    Use this when the question doesn't fit neatly into one category,
-    or when looking for a specific technology, company, or skill.
+    Keyword search across all portfolio content for a specific topic.
+    Use this for exact term matching when looking for a specific
+    technology, company, or skill.
     """
     query_lower = query.lower()
     results = {}
-
-    # search experience
     matched_exp = []
     for exp in PORTFOLIO_DATA["experience"]:
-        searchable = (
-            exp["company"] + exp["role"] + " ".join(exp["highlights"])
-        ).lower()
+        searchable = (exp["company"] + exp["role"] + " ".join(exp["highlights"])).lower()
         if query_lower in searchable:
             matched_exp.append(exp)
     if matched_exp:
         results["experience"] = matched_exp
-
-    # search projects
     matched_proj = []
     for proj in PORTFOLIO_DATA["projects"]:
-        searchable = (
-            proj["name"] + proj["description"] + " ".join(proj.get("tech", []))
-            + " ".join(proj.get("highlights", []))
-        ).lower()
+        searchable = (proj["name"] + proj["description"] + " ".join(proj.get("tech", []))
+                      + " ".join(proj.get("highlights", []))).lower()
         if query_lower in searchable:
             matched_proj.append(proj)
     if matched_proj:
         results["projects"] = matched_proj
-
-    # search skills
     for category, skill_list in PORTFOLIO_DATA["skills"].items():
         for skill in skill_list:
             if query_lower in skill.lower():
-                if "skills" not in results:
-                    results["skills"] = {}
-                results["skills"][category] = skill_list
+                results.setdefault("skills", {})[category] = skill_list
                 break
-
-    # search achievements
     matched_ach = [a for a in PORTFOLIO_DATA["achievements"] if query_lower in a.lower()]
     if matched_ach:
         results["achievements"] = matched_ach
-
     if not results:
         return json.dumps({"message": f"No results found for '{query}'"})
-
     return json.dumps(results, indent=2)
+
+
+@mcp.tool()
+def search_portfolio_semantic(query: str) -> str:
+    """
+    Semantic search across all portfolio content using a RAG pipeline
+    (hybrid keyword + vector search with reranking). Use this for
+    open-ended, conceptual, or natural-language questions that don't
+    map to a specific category — for example "what makes Jia Jing
+    unique" or "tell me about his AI work". Falls back gracefully if
+    the semantic search service is unavailable.
+    """
+    if not _rag_available:
+        return json.dumps({
+            "message": "Semantic search is currently unavailable. "
+                       "Try a specific tool like get_experience or get_skills."
+        })
+    try:
+        results = _rag_retriever.invoke(query)
+        seen, chunks = set(), []
+        for r in results:
+            if r.page_content not in seen:
+                seen.add(r.page_content)
+                chunks.append({
+                    "section": r.metadata.get("section", "unknown"),
+                    "content": r.page_content
+                })
+        if not chunks:
+            return json.dumps({"message": f"No relevant information found for '{query}'"})
+        return json.dumps({"results": chunks}, indent=2)
+    except Exception as e:
+        return json.dumps({"message": f"Semantic search error: {str(e)}"})
 
 
 # ── Run ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
+    # Initialize RAG once at startup (before serving requests)
+    _init_rag()
     app = mcp.streamable_http_app()
     uvicorn.run(app, host="0.0.0.0", port=8000)
