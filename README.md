@@ -1,6 +1,6 @@
 # AI-Powered Portfolio Chatbot
 
-> Full-stack AI engineering project demonstrating Model Context Protocol (MCP), LiteLLM gateway, LangFuse observability, and automated CI/CD on AWS EC2.
+> Full-stack AI engineering project demonstrating Model Context Protocol (MCP), a production RAG pipeline, LiteLLM gateway, LangFuse observability, and automated CI/CD on AWS EC2.
 
 **Live site:** [limjiajing.com](https://www.limjiajing.com) · **Author:** [Lim Jia Jing](https://www.linkedin.com/in/limjiajing123)
 
@@ -8,7 +8,7 @@
 
 ## What this project is
 
-A personal portfolio website with an AI chatbot that answers questions about my background, skills, and experience. Built not just as a portfolio showcase, but as a real-world AI engineering system — with proper tool-augmented inference, observability, caching, and a three-layer CI/CD pipeline.
+A personal portfolio website with an AI chatbot that answers questions about my background, skills, and experience. Built not just as a portfolio showcase, but as a real-world AI engineering system — with tool-augmented inference, a hybrid RAG pipeline for semantic questions, observability, caching, and a three-layer CI/CD pipeline.
 
 > **Claude Certified Architect Foundation** — Score: 983/1000
 
@@ -27,17 +27,23 @@ Node.js / Express Backend (port 5000)
       │              │               │
       ▼              ▼               ▼
 MCP Server      LiteLLM           Redis
-(Python)        Gateway           Cache
-(port 8000)     (port 4000)
-                     │
-              ┌──────┴──────────┐
-              ▼                 ▼
-          Gemini AI         OpenRouter
-          (primary)         (fallback)
-              │
-              ▼
-          LangFuse
-       (observability)
+(Python,        Gateway           Cache
+ 10 tools)      (port 4000)
+ port 8000           │
+      │        ┌──────┴──────────┐
+      │        ▼                 ▼
+      │    Gemini AI         OpenRouter
+      │    (primary)         (fallback)
+      │        │
+      │        ▼
+      │    LangFuse
+      │  (observability)
+      ▼
+RAG semantic search tool
+      ├──▶ Cohere embeddings (query vectorization)
+      ├──▶ Pinecone (vector search)
+      ├──▶ BM25 (local keyword search)
+      └──▶ Cohere rerank (cross-encoder reranking)
 
 All services containerized · AWS EC2 · GitHub Actions CI/CD
 ```
@@ -52,7 +58,7 @@ The chatbot uses a **two-stage inference pattern** via Model Context Protocol (M
 
 Traditional approach: dump the entire knowledge base into every prompt — wasteful, expensive, and imprecise.
 
-MCP approach: define 9 specific tools. Gemini selects only the relevant tool and fetches precise data. Fewer tokens, higher accuracy, scales cleanly as portfolio data grows.
+MCP approach: define specific tools. Gemini selects only the relevant tool and fetches precise data. Fewer tokens, higher accuracy, scales cleanly as portfolio data grows.
 
 ### Stage 1 — Tool selection
 
@@ -61,7 +67,7 @@ User: "what is jia jing's current job?"
               │
               ▼
     First Gemini call
-    (receives list of 9 MCP tools)
+    (receives list of 10 MCP tools)
               │
               ▼
     Gemini decides: call get_experience()
@@ -82,9 +88,62 @@ User: "what is jia jing's current job?"
      as a Test Automation Software Analyst..."
 ```
 
+### Two kinds of search
+
+The chatbot has two complementary retrieval tools, and Gemini chooses based on the question:
+
+| Question type | Tool used | How it works |
+|---|---|---|
+| Specific ("what's his email") | structured tools | direct lookup from structured data |
+| Exact term ("has he used Docker") | `search_portfolio` | keyword matching |
+| Open-ended ("what makes him unique") | `search_portfolio_semantic` | RAG pipeline |
+
+RAG is encapsulated as one MCP tool rather than replacing the others — combining the precision of structured tools with the flexibility of semantic search.
+
 ---
 
-## MCP Tools (9 total)
+## The RAG pipeline
+
+The `search_portfolio_semantic` tool runs a production-grade retrieve-then-rerank pipeline:
+
+```
+Query
+  │
+  ▼
+HYBRID RETRIEVAL (wide net)
+  ├─ BM25 keyword search (local)      catches exact term matches
+  └─ Cohere embeddings + Pinecone     catches semantic matches
+        │
+        ▼  weighted fusion (40% keyword / 60% semantic), top 6
+  │
+  ▼
+RERANKING (precise)
+  Cohere rerank (cross-encoder) scores query against each candidate
+        │
+        ▼  top 3 most relevant chunks
+  │
+  ▼
+Returned to Gemini for answer generation
+```
+
+### Why hosted services (Cohere + Pinecone)?
+
+The pipeline uses hosted APIs rather than local ML models. This is a deliberate resource decision — the production EC2 instance is a 1GB free-tier box already running five containers, with limited free RAM. Local embedding and reranking models would need ~250MB that isn't available. Hosting them externally keeps the chatbot deployable while demonstrating the same architecture.
+
+### Retrieval evaluation
+
+Measured on a 12-query labelled test set:
+
+| Metric | Semantic Only | Hybrid | Hybrid + Rerank |
+|---|---|---|---|
+| Hit Rate | 83% | 92% | **100%** |
+| MRR | 0.750 | 0.556 | **0.806** |
+
+Each stage measurably improved retrieval. Hybrid search caught exact-match queries that pure embeddings missed; reranking fixed the ranking quality that hybrid alone degraded. Measuring multiple metrics revealed what a single metric would have hidden.
+
+---
+
+## MCP Tools (10 total)
 
 | Tool | Returns |
 |---|---|
@@ -97,6 +156,7 @@ User: "what is jia jing's current job?"
 | `get_achievements` | Awards and certifications |
 | `get_leadership` | Leadership and co-curricular roles |
 | `search_portfolio` | Keyword search across all portfolio data |
+| `search_portfolio_semantic` | RAG semantic search (hybrid + rerank) |
 
 ---
 
@@ -106,10 +166,14 @@ User: "what is jia jing's current job?"
 |---|---|---|
 | Frontend | React, Styled Components, Nginx | Portfolio UI |
 | Backend | Node.js, Express.js | Chat API, orchestration |
-| MCP Server | Python, FastMCP | 9 portfolio tools via Streamable HTTP |
+| MCP Server | Python, FastMCP | 10 portfolio tools via Streamable HTTP |
 | LLM Gateway | LiteLLM | Provider-agnostic routing and fallback |
 | Primary LLM | Gemini AI (free tier) | Two-stage inference |
 | Fallback LLM | OpenRouter | Automatic failover on rate limits |
+| RAG embeddings | Cohere `embed-english-v3.0` | Query and document vectorization |
+| Vector DB | Pinecone | Semantic vector search |
+| Keyword search | BM25 (`rank_bm25`) | Exact-term matching in hybrid search |
+| Reranking | Cohere `rerank-english-v3.0` | Cross-encoder relevance scoring |
 | Cache | Redis | Response caching (~40% latency improvement) |
 | Observability | LangFuse | Token usage, latency, cost, error tracking |
 | Containers | Docker, Docker Compose | All services containerized |
@@ -137,7 +201,7 @@ Push to preproduction branch
 │                                  │
 │  Step 2 — MCP integration tests  │
 │  • Real Python MCP server        │
-│  • Verifies all 9 tools return   │
+│  • Verifies tools return         │
 │    correct data                  │
 │  • No LLM involved               │
 │                                  │
@@ -167,6 +231,8 @@ Push to preproduction branch
 ### Why mocked LLM tests in CI?
 
 LLM calls are non-deterministic and rate-limited — they make unreliable CI tests. Unit tests mock the LLM to test whether the backend *handles* a successful response correctly. MCP integration tests verify tool correctness without any LLM involvement. Only deterministic tests run in CI.
+
+The RAG tool degrades gracefully in CI: without Cohere/Pinecone keys, `search_portfolio_semantic` returns a fallback message and the other tools are unaffected, so tests pass without exposing secrets to CI.
 
 ---
 
@@ -208,7 +274,9 @@ portfolio_instance_only/
 │   └── Dockerfile
 │
 ├── mcp-server/
-│   ├── server.py                 # FastMCP server with 9 portfolio tools
+│   ├── server.py                 # FastMCP server with 10 portfolio tools
+│   ├── portfolio_data.py         # Answer-style content for the RAG pipeline
+│   ├── index_documents.py        # One-time script to index data into Pinecone
 │   ├── requirements.txt
 │   └── Dockerfile
 │
@@ -235,6 +303,8 @@ portfolio_instance_only/
 - Docker and Docker Compose
 - Gemini API key — free at [aistudio.google.com](https://aistudio.google.com)
 - OpenRouter API key — free at [openrouter.ai](https://openrouter.ai)
+- Cohere API key — free at [cohere.com](https://cohere.com)
+- Pinecone API key — free at [pinecone.io](https://pinecone.io)
 - LangFuse account — free at [cloud.langfuse.com](https://cloud.langfuse.com)
 
 ### 1. Clone the repo
@@ -255,25 +325,39 @@ Create a `.env` file in the root:
 GEMINI_API_KEY=your_gemini_key
 OPENROUTER_API_KEY=your_openrouter_key
 DISCORD_WEBHOOK_URL=your_webhook_url
+COHERE_API_KEY=your_cohere_key
+PINECONE_API_KEY=your_pinecone_key
 LANGFUSE_SECRET_KEY=your_langfuse_secret
 LANGFUSE_PUBLIC_KEY=your_langfuse_public
 LANGFUSE_HOST=https://cloud.langfuse.com
 ```
 
-### 4. Start all services
+### 4. Index portfolio data into Pinecone (run once)
+```bash
+cd mcp-server
+python index_documents.py
+cd ..
+```
+
+### 5. Start all services
 ```bash
 docker compose up -d --build
 ```
 
-### 5. Test
+### 6. Test
 ```bash
 # Health check
 curl http://localhost:5000/health
 
-# Test the chatbot
+# Test a structured-tool question
 curl -X POST http://localhost:5000/api/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "what is jia jing email?"}'
+
+# Test a semantic (RAG) question
+curl -X POST http://localhost:5000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "what makes jia jing unique as an engineer?"}'
 ```
 
 ### Local service ports
@@ -294,6 +378,15 @@ Vendor lock-in avoidance. LiteLLM provides a single OpenAI-compatible interface.
 
 ### Why MCP instead of context injection?
 Token efficiency and precision. Injecting the full portfolio as context on every request wastes tokens. MCP lets Gemini fetch only the data relevant to each question — reducing cost and improving answer accuracy.
+
+### Why RAG as an MCP tool rather than replacing MCP?
+Structured tools stay precise for specific lookups; the RAG tool adds flexibility for open-ended questions. Gemini chooses which to call. RAG complexity is encapsulated behind the same MCP interface as everything else — the rest of the system doesn't know or care that one tool uses RAG internally.
+
+### Why hosted RAG services (Cohere + Pinecone)?
+The 1GB EC2 instance can't fit local embedding and reranking models alongside five containers. Hosting them externally is the right resource tradeoff for this deployment, and mirrors how production systems separate model serving from application logic.
+
+### Why answer-style RAG content?
+Source content is phrased the way answers are phrased, not as resume entries — "Jia Jing currently works as..." instead of "Work Experience:". This dramatically improved retrieval relevance by matching how questions are actually asked.
 
 ### Why Redis caching?
 The same question asked twice does not need two LLM calls. Redis caches responses with a 1-hour TTL, reducing API costs and improving response latency by approximately 40%.
@@ -317,9 +410,10 @@ Fix: switched from `require()` to dynamic `await import()` inside the MCP client
 
 ## What I'd build next
 
-- **RAG pipeline** — store portfolio data in a vector database for semantic search instead of exact keyword matching in `search_portfolio`
-- **LangFuse evals** — automated scoring of response quality, not just logging
-- **Streaming responses** — stream Gemini output token by token for better UX
+- **Streaming responses** — stream Gemini output token by token for better perceived latency
+- **Latency instrumentation** — measure each stage, then optimize the actual bottleneck
+- **LangFuse evals** — automated scoring of response quality (LLM-as-judge), not just logging
+- **Cache key normalization** — catch more cache hits by normalizing query phrasing
 - **ECS migration** — move from manual deploy script to AWS ECS for automatic scaling and health management
 
 ---
